@@ -1,0 +1,338 @@
+<UserControl x:Class="MyWinFormsApp.Views.PosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="63*"/>
+            <ColumnDefinition Width="37*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ═══════════════ LEFT: PRODUCT SELECTION ═══════════════ -->
+        <DockPanel Grid.Column="0" Margin="20,16,8,16">
+
+            <!-- Search Bar + History Button -->
+            <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="TxtSearch" Grid.Column="0"
+                         materialDesign:HintAssist.Hint="Search products (name, SKU, barcode)..."
+                         materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                         materialDesign:TextFieldAssist.LeadingIcon="Magnify"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         FontSize="14"
+                         TextChanged="TxtSearch_TextChanged"/>
+
+                <Button Grid.Column="1" Margin="8,0,0,0"
+                        Style="{StaticResource MaterialDesignIconButton}"
+                        ToolTip="Held Orders" Click="BtnHeldOrders_Click">
+                    <materialDesign:PackIcon Kind="PauseCircleOutline" Width="24" Height="24"/>
+                </Button>
+
+                <Button Grid.Column="2" Margin="4,0,0,0"
+                        Style="{StaticResource MaterialDesignIconButton}"
+                        ToolTip="Recent Sales" Click="BtnHistory_Click">
+                    <materialDesign:PackIcon Kind="History" Width="24" Height="24"/>
+                </Button>
+            </Grid>
+
+            <!-- Category Filter Chips -->
+            <ScrollViewer DockPanel.Dock="Top"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled"
+                          Margin="0,0,0,12">
+                <StackPanel x:Name="CategoryPanel" Orientation="Horizontal"/>
+            </ScrollViewer>
+
+            <!-- Product Grid -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <ItemsControl x:Name="ProductGrid">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="3"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="4" CornerRadius="8" Cursor="Hand"
+                                        Background="{DynamicResource MaterialDesign.Brush.Card}"
+                                        BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                        BorderThickness="1"
+                                        MouseLeftButtonUp="ProductCard_Click"
+                                        Tag="{Binding Id}">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="4" Opacity="0.1" ShadowDepth="1"/>
+                                    </Border.Effect>
+                                    <StackPanel Margin="14,12">
+                                        <DockPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="Medium" FontSize="13"
+                                                       TextTrimming="CharacterEllipsis" DockPanel.Dock="Left"
+                                                       MaxWidth="160"/>
+                                            <TextBlock Text="{Binding StockDisplay}" FontSize="10" Opacity="0.5"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        </DockPanel>
+                                        <TextBlock Text="{Binding CategoryName}" FontSize="11" Opacity="0.5"
+                                                   Margin="0,2,0,6" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock FontSize="16" FontWeight="Bold"
+                                                   Foreground="{DynamicResource PrimaryHueMidBrush}">
+                                            <Run Text="{Binding SellingPrice, StringFormat=\{0:N2\}}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Loading indicator -->
+                    <ProgressBar x:Name="ProgressLoad"
+                                 Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                 IsIndeterminate="True" Visibility="Collapsed"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                                 Width="40" Height="40"/>
+
+                    <!-- Empty state -->
+                    <TextBlock x:Name="TxtEmpty" Text="No products found."
+                               FontSize="14" Opacity="0.4"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="Collapsed"/>
+                </Grid>
+            </ScrollViewer>
+        </DockPanel>
+
+        <!-- ═══════════════ RIGHT: CART &amp; BILLING ═══════════════ -->
+        <Border Grid.Column="1"
+                Background="{DynamicResource MaterialDesign.Brush.Card}"
+                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                BorderThickness="1,0,0,0">
+
+            <DockPanel Margin="16,16,16,12">
+
+                <!-- Header -->
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <materialDesign:PackIcon Kind="CartOutline" Width="20" Height="20"
+                                              VerticalAlignment="Center" Margin="0,0,8,0" Opacity="0.7"/>
+                    <TextBlock Text="Current Sale" FontSize="16" FontWeight="Medium" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TxtCartCount" FontSize="12" Opacity="0.5"
+                               VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </DockPanel>
+
+                <!-- Customer Name -->
+                <TextBox x:Name="TxtCustomerName" DockPanel.Dock="Top"
+                         materialDesign:HintAssist.Hint="Customer Name (optional)"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Margin="0,0,0,10" FontSize="13" Padding="10,8"/>
+
+                <!-- Action Buttons at bottom -->
+                <StackPanel DockPanel.Dock="Bottom">
+                    <!-- CHARGE Button -->
+                    <Button x:Name="BtnCharge" Click="BtnCharge_Click"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Height="48" FontSize="16" FontWeight="Bold"
+                            Margin="0,0,0,8"
+                            HorizontalContentAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="CashRegister" Width="22" Height="22"
+                                                      VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <TextBlock x:Name="TxtChargeAmount" Text="CHARGE  ₹0.00" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Hold + Clear -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Content="Hold Order"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Click="BtnHold_Click" Height="36" FontSize="12"/>
+                        <Button Grid.Column="2" Content="Clear Cart"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Click="BtnClear_Click" Height="36" FontSize="12"
+                                Foreground="#F44336" BorderBrush="#F44336"/>
+                    </Grid>
+
+                    <ProgressBar x:Name="ProgressCharge"
+                                 Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                 IsIndeterminate="True" Visibility="Collapsed"
+                                 HorizontalAlignment="Center" Width="28" Height="28" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <!-- Totals Section (above buttons) -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,8">
+                    <Border Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,0,0,10"/>
+
+                    <!-- Subtotal -->
+                    <Grid Margin="0,0,0,4">
+                        <TextBlock Text="Subtotal" FontSize="13" Opacity="0.7"/>
+                        <TextBlock x:Name="TxtSubtotal" Text="₹0.00" FontSize="13" HorizontalAlignment="Right"/>
+                    </Grid>
+
+                    <!-- Discount Row -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Discount" FontSize="13" Opacity="0.7"
+                                   VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="₹" FontSize="11" Opacity="0.5" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <ToggleButton x:Name="ToggleDiscountType"
+                                          Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
+                                          Width="36" Height="18"
+                                          Checked="DiscountType_Changed"
+                                          Unchecked="DiscountType_Changed"
+                                          ToolTip="Toggle Fixed / Percentage"/>
+                            <TextBlock Text="%" FontSize="11" Opacity="0.5" VerticalAlignment="Center" Margin="2,0,0,0"/>
+                        </StackPanel>
+                        <TextBox x:Name="TxtDiscountValue" Grid.Column="3" Text="0"
+                                 Width="70" FontSize="13" TextAlignment="Right"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Padding="6,4"
+                                 TextChanged="Discount_Changed"/>
+                    </Grid>
+
+                    <!-- Tax Breakdown -->
+                    <ItemsControl x:Name="TaxBreakdownList" Margin="0,4,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,2">
+                                    <TextBlock Text="{Binding TaxName}" FontSize="11" Opacity="0.6"/>
+                                    <TextBlock Text="{Binding FormattedAmount}" FontSize="11" Opacity="0.6" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Border Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,8,0,8"/>
+
+                    <!-- Grand Total -->
+                    <Grid Margin="0,0,0,4">
+                        <TextBlock Text="TOTAL" FontSize="18" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtGrandTotal" Text="₹0.00" FontSize="22" FontWeight="Bold"
+                                   HorizontalAlignment="Right"
+                                   Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    </Grid>
+
+                    <!-- Payment Method -->
+                    <Border Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,6,0,8"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <RadioButton x:Name="RbCash" Content="Cash" IsChecked="True"
+                                     GroupName="PayMethod" Margin="0,0,16,0" FontSize="13"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     Checked="PaymentMethod_Changed"/>
+                        <RadioButton x:Name="RbUpi" Content="UPI"
+                                     GroupName="PayMethod" Margin="0,0,16,0" FontSize="13"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     Checked="PaymentMethod_Changed"/>
+                        <RadioButton x:Name="RbCard" Content="Card"
+                                     GroupName="PayMethod" FontSize="13"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     Checked="PaymentMethod_Changed"/>
+                    </StackPanel>
+
+                    <!-- Cash: Amount Tendered + Change -->
+                    <StackPanel x:Name="CashPanel">
+                        <Grid Margin="0,0,0,4">
+                            <TextBlock Text="Tendered" FontSize="13" Opacity="0.7" VerticalAlignment="Center"/>
+                            <TextBox x:Name="TxtAmountTendered" Width="100" HorizontalAlignment="Right"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     Padding="6,4" FontSize="13" TextAlignment="Right"
+                                     TextChanged="AmountTendered_Changed"/>
+                        </Grid>
+                        <Grid>
+                            <TextBlock Text="Change" FontSize="13" Opacity="0.7"/>
+                            <TextBlock x:Name="TxtChange" Text="₹0.00" FontSize="14" FontWeight="SemiBold"
+                                       HorizontalAlignment="Right" Foreground="#4CAF50"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Cart Items (fills remaining space) -->
+                <Border BorderBrush="{DynamicResource MaterialDesignDivider}"
+                        BorderThickness="1" CornerRadius="6" Margin="0,0,0,0">
+                    <Grid>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="CartList" Margin="6">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,0,6" Padding="10,8"
+                                                Background="{DynamicResource MaterialDesign.Brush.Background}"
+                                                CornerRadius="6">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- Row 1: Name + Remove -->
+                                                <DockPanel Grid.Row="0">
+                                                    <TextBlock Text="{Binding Product.Name}" FontWeight="Medium"
+                                                               FontSize="13" TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center" DockPanel.Dock="Left"
+                                                               MaxWidth="200"/>
+                                                    <Button HorizontalAlignment="Right"
+                                                            Style="{StaticResource MaterialDesignToolForegroundButton}"
+                                                            Width="24" Height="24" Padding="0"
+                                                            Click="BtnRemoveItem_Click"
+                                                            Tag="{Binding}">
+                                                        <materialDesign:PackIcon Kind="Close" Width="14" Height="14"
+                                                                                  Opacity="0.5"/>
+                                                    </Button>
+                                                </DockPanel>
+
+                                                <!-- Row 2: Qty controls + Price -->
+                                                <DockPanel Grid.Row="1" Margin="0,4,0,0">
+                                                    <!-- Qty Controls -->
+                                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left"
+                                                                VerticalAlignment="Center">
+                                                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                                Width="28" Height="28" Padding="0"
+                                                                Click="BtnDecreaseQty_Click" Tag="{Binding}"
+                                                                FontSize="16" Content="-"/>
+                                                        <TextBlock Text="{Binding FormattedQuantity}" FontSize="14"
+                                                                   FontWeight="SemiBold"
+                                                                   VerticalAlignment="Center" Margin="10,0"
+                                                                   MinWidth="24" TextAlignment="Center"/>
+                                                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                                Width="28" Height="28" Padding="0"
+                                                                Click="BtnIncreaseQty_Click" Tag="{Binding}"
+                                                                FontSize="16" Content="+"/>
+                                                    </StackPanel>
+
+                                                    <!-- Price -->
+                                                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding FormattedUnitPrice}" FontSize="11"
+                                                                   Opacity="0.5" HorizontalAlignment="Right"/>
+                                                        <TextBlock Text="{Binding FormattedLineTotal}" FontWeight="Bold"
+                                                                   FontSize="14" HorizontalAlignment="Right"/>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <!-- Empty cart message -->
+                        <TextBlock x:Name="TxtCartEmpty" Text="Tap products to add to cart"
+                                   FontSize="13" Opacity="0.3"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Visibility="Visible"/>
+                    </Grid>
+                </Border>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

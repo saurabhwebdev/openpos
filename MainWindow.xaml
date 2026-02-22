@@ -1,0 +1,169 @@
+<Window x:Class="MyWinFormsApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:MyWinFormsApp.ViewModels"
+        Title="FreePOS" Height="720" Width="1200"
+        MinHeight="550" MinWidth="850"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource MaterialDesign.Brush.Background}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="14"
+        FontFamily="{materialDesign:MaterialDesignFont}">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+    <DockPanel>
+        <!-- TOP BAR -->
+        <materialDesign:ColorZone Mode="PrimaryDark" DockPanel.Dock="Top"
+                                   Padding="16,10" materialDesign:ElevationAssist.Elevation="Dp4">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Hamburger toggle -->
+                    <Button x:Name="BtnToggleNav" Click="BtnToggleNav_Click"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            Foreground="White" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="Menu" Width="22" Height="22"/>
+                    </Button>
+                    <TextBlock Text="FreePOS" FontSize="20" FontWeight="Medium"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
+                            HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <!-- Shop info + switch -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                        <materialDesign:PackIcon Kind="StorefrontOutline" Width="16" Height="16"
+                                                  VerticalAlignment="Center" Margin="0,0,5,0" Opacity="0.7"/>
+                        <TextBlock x:Name="TxtTenantName" FontSize="12" Opacity="0.7"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Button x:Name="BtnSwitchShop" Click="BtnSwitchShop_Click"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            Foreground="White" ToolTip="Switch Shop" Margin="0,0,8,0"
+                            Visibility="Collapsed">
+                        <materialDesign:PackIcon Kind="SwapHorizontal" Width="18" Height="18"/>
+                    </Button>
+
+                    <!-- User info -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
+                        <materialDesign:PackIcon Kind="AccountCircleOutline" Width="16" Height="16"
+                                                  VerticalAlignment="Center" Margin="0,0,5,0" Opacity="0.7"/>
+                        <TextBlock x:Name="TxtUserInfo" FontSize="12" Opacity="0.7"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Border Width="1" Height="20" Background="White" Opacity="0.2" Margin="0,0,12,0"/>
+
+                    <!-- Theme toggle -->
+                    <materialDesign:PackIcon Kind="WhiteBalanceSunny" Width="18" Height="18"
+                                              VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                  IsChecked="{Binding IsDarkTheme}"
+                                  VerticalAlignment="Center"/>
+                    <materialDesign:PackIcon Kind="MoonWaningCrescent" Width="18" Height="18"
+                                              VerticalAlignment="Center" Margin="6,0,12,0"/>
+
+                    <Border Width="1" Height="20" Background="White" Opacity="0.2" Margin="0,0,12,0"/>
+
+                    <!-- Logout -->
+                    <Button x:Name="BtnLogout" Click="BtnLogout_Click"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}"
+                            Foreground="White" ToolTip="Logout">
+                        <materialDesign:PackIcon Kind="Logout" Width="20" Height="20"/>
+                    </Button>
+                </StackPanel>
+
+                <TextBlock/>
+            </DockPanel>
+        </materialDesign:ColorZone>
+
+        <!-- SIDE NAV + CONTENT -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="NavColumn" Width="260"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- SIDE NAV -->
+            <Border x:Name="SideNav" Grid.Column="0"
+                    Background="{DynamicResource MaterialDesign.Brush.Card}"
+                    BorderBrush="{DynamicResource MaterialDesignDivider}"
+                    BorderThickness="0,0,1,0">
+                <DockPanel>
+                    <!-- Nav Items -->
+                    <ListBox x:Name="NavList" DockPanel.Dock="Top" Margin="8,12,8,0"
+                             SelectedIndex="0"
+                             Style="{StaticResource MaterialDesignNavigationPrimaryListBox}"
+                             SelectionChanged="NavList_SelectionChanged">
+
+                        <ListBoxItem Padding="16,12" ToolTip="Point of Sale">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CashRegister" Width="24" Height="24"
+                                                          VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                <TextBlock x:Name="NavTextPos" Text="POS"
+                                           VerticalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Padding="16,12" ToolTip="Inventory">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="PackageVariantClosed" Width="24" Height="24"
+                                                          VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                <TextBlock x:Name="NavTextInventory" Text="Inventory"
+                                           VerticalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Padding="16,12" ToolTip="Data Management">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="DatabaseOutline" Width="24" Height="24"
+                                                          VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                <TextBlock x:Name="NavTextData" Text="Data Management"
+                                           VerticalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Padding="16,12" ToolTip="Profile">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="AccountCircleOutline" Width="24" Height="24"
+                                                          VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                <TextBlock x:Name="NavTextProfile" Text="Profile"
+                                           VerticalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Padding="16,12" ToolTip="Settings">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CogOutline" Width="24" Height="24"
+                                                          VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                <TextBlock x:Name="NavTextSettings" Text="Settings"
+                                           VerticalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </ListBox>
+
+                    <TextBlock/>
+                </DockPanel>
+            </Border>
+
+            <!-- CONTENT AREA -->
+            <Border Grid.Column="1">
+                <ContentControl x:Name="ContentArea"/>
+            </Border>
+        </Grid>
+    </DockPanel>
+
+    <!-- Global Modal Overlay — covers entire window (sidebar + header + content) -->
+    <Grid x:Name="ModalOverlayContainer" Visibility="Collapsed">
+        <Border Background="#AA000000" MouseLeftButtonUp="ModalDimOverlay_Click"/>
+        <ContentControl x:Name="ModalContent"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Margin="40"/>
+    </Grid>
+    </Grid>
+</Window>
