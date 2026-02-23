@@ -4,66 +4,111 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
     <UserControl.Resources>
-        <!-- Accent colors -->
         <SolidColorBrush x:Key="AccentGreen" Color="#10B981"/>
         <SolidColorBrush x:Key="AccentRed" Color="#EF4444"/>
         <SolidColorBrush x:Key="AccentAmber" Color="#F59E0B"/>
-        <SolidColorBrush x:Key="SubtleText" Color="#94A3B8"/>
-        <SolidColorBrush x:Key="CardHover" Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="Purple" Color="#7C4DFF"/>
 
-        <!-- Product card hover effect -->
-        <Style x:Key="ProductCardBorder" TargetType="Border">
-            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Card}"/>
-            <Setter Property="CornerRadius" Value="12"/>
+        <!-- Product row hover -->
+        <Style x:Key="ProductRowBorder" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="16,14"/>
-            <Setter Property="BorderThickness" Value="1.5"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#0A000000"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}"/>
-                    <Trigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <ThicknessAnimation Storyboard.TargetProperty="Padding"
-                                                    To="16,12" Duration="0:0:0.1"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.EnterActions>
-                    <Trigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <ThicknessAnimation Storyboard.TargetProperty="Padding"
-                                                    To="16,14" Duration="0:0:0.1"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.ExitActions>
+                    <Setter Property="Background" Value="#F5F3FF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <!-- Discount type button style -->
-        <Style x:Key="DiscountTypeBtn" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="MinWidth" Value="40"/>
-            <Setter Property="Padding" Value="8,2"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
+        <!-- Discount toggle radio -->
+        <Style x:Key="DiscountToggleRadio" TargetType="RadioButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" CornerRadius="4" Padding="8,3"
+                                Background="Transparent" Cursor="Hand"
+                                MinWidth="32" HorizontalAlignment="Center">
+                            <TextBlock x:Name="Tb"
+                                       Text="{TemplateBinding Content}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="#999"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#EDE7F6"/>
+                                <Setter TargetName="Tb" Property="Foreground" Value="#7C4DFF"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="#F5F5F5"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Cart row -->
+        <Style x:Key="CartRowBorder" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#08000000"/>
+        </Style>
+
+        <!-- Payment method radio -->
+        <Style x:Key="PayMethodRadio" TargetType="RadioButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" CornerRadius="8" Padding="8,8"
+                                Background="Transparent" Cursor="Hand"
+                                BorderBrush="#E0E0E0" BorderThickness="1.5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#F3F0FF"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#7C4DFF"/>
+                                <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="#FAFAFA"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#BDBDBD"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="62*"/>
-            <ColumnDefinition Width="38*"/>
+            <ColumnDefinition Width="63*"/>
+            <ColumnDefinition Width="37*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- LEFT: PRODUCT SELECTION -->
-        <DockPanel Grid.Column="0" Margin="20,16,10,16">
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- LEFT: PRODUCT CATALOG                              -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <DockPanel Grid.Column="0" Margin="20,14,12,14">
 
-            <!-- Search Bar + Action Buttons -->
-            <Grid DockPanel.Dock="Top" Margin="0,0,0,14">
+            <!-- Search bar row -->
+            <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -74,428 +119,127 @@
                          materialDesign:TextFieldAssist.HasLeadingIcon="True"
                          materialDesign:TextFieldAssist.LeadingIcon="Magnify"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         FontSize="14" Padding="12,10"
+                         FontSize="13" Padding="8,7"
                          materialDesign:HintAssist.FloatingOffset="0,-20"
                          TextChanged="TxtSearch_TextChanged"/>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
-                    <Button Margin="0,0,4,0" Height="42" Width="42"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Padding="0"
-                            ToolTip="Held Orders" Click="BtnHeldOrders_Click">
-                        <materialDesign:PackIcon Kind="PauseCircleOutline" Width="22" Height="22"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0"
+                            VerticalAlignment="Center">
+                    <Button Height="36" Width="36"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            ToolTip="Held Orders" Click="BtnHeldOrders_Click"
+                            Margin="0,0,4,0">
+                        <materialDesign:PackIcon Kind="PauseCircleOutline" Width="20" Height="20"
+                                                  Foreground="{StaticResource AccentAmber}"/>
                     </Button>
-
-                    <Button Height="42" Width="42"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Padding="0"
+                    <Button Height="36" Width="36"
+                            Style="{StaticResource MaterialDesignIconButton}"
                             ToolTip="Sales History" Click="BtnHistory_Click">
-                        <materialDesign:PackIcon Kind="History" Width="22" Height="22"/>
+                        <materialDesign:PackIcon Kind="History" Width="20" Height="20"
+                                                  Foreground="{StaticResource Purple}"/>
                     </Button>
                 </StackPanel>
             </Grid>
 
-            <!-- Category Filter Chips -->
+            <!-- Category pills -->
             <ScrollViewer DockPanel.Dock="Top"
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled"
-                          Margin="0,0,0,14">
+                          Margin="0,0,0,12">
                 <StackPanel x:Name="CategoryPanel" Orientation="Horizontal"/>
             </ScrollViewer>
 
-            <!-- Product Grid -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                          Padding="0,0,4,0">
-                <Grid>
-                    <ItemsControl x:Name="ProductGrid">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="3"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Style="{StaticResource ProductCardBorder}"
-                                        MouseLeftButtonUp="ProductCard_Click"
-                                        Tag="{Binding Id}">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="8" Opacity="0.06" ShadowDepth="2" Direction="270"/>
-                                    </Border.Effect>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <!-- Product Name -->
-                                        <TextBlock Grid.Row="0" Text="{Binding Name}"
-                                                   FontWeight="SemiBold" FontSize="13.5"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   MaxWidth="180"/>
-
-                                        <!-- Category + Stock badge -->
-                                        <DockPanel Grid.Row="1" Margin="0,5,0,8">
-                                            <TextBlock Text="{Binding CategoryName}" FontSize="11.5"
-                                                       Opacity="0.5" TextTrimming="CharacterEllipsis"
-                                                       DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                                            <Border DockPanel.Dock="Right" HorizontalAlignment="Right"
-                                                    Background="#E8F5E9" CornerRadius="4"
-                                                    Padding="6,2" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding StockDisplay}" FontSize="10"
-                                                           Foreground="#2E7D32" FontWeight="Medium"/>
-                                            </Border>
-                                        </DockPanel>
-
-                                        <!-- Price -->
-                                        <TextBlock Grid.Row="2" FontSize="17" FontWeight="Bold"
-                                                   Foreground="{DynamicResource PrimaryHueMidBrush}">
-                                            <Run Text="&#x20B9;"/><Run Text="{Binding SellingPrice, StringFormat=\{0:N2\}}"/>
-                                        </TextBlock>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                    <!-- Loading indicator -->
-                    <ProgressBar x:Name="ProgressLoad"
-                                 Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                 IsIndeterminate="True" Visibility="Collapsed"
-                                 HorizontalAlignment="Center" VerticalAlignment="Center"
-                                 Width="44" Height="44"/>
-
-                    <!-- Empty state -->
-                    <StackPanel x:Name="TxtEmpty" Visibility="Collapsed"
-                                HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <materialDesign:PackIcon Kind="PackageVariantRemove"
-                                                  Width="48" Height="48" Opacity="0.2"
-                                                  HorizontalAlignment="Center"/>
-                        <TextBlock Text="No products found" FontSize="14" Opacity="0.35"
-                                   HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                    </StackPanel>
-                </Grid>
-            </ScrollViewer>
-        </DockPanel>
-
-        <!-- RIGHT: CART &amp; BILLING -->
-        <Border Grid.Column="1"
-                Background="{DynamicResource MaterialDesign.Brush.Card}"
-                CornerRadius="16,0,0,16"
-                Margin="0,12,0,12">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="20" Opacity="0.08" ShadowDepth="0" Direction="180"/>
-            </Border.Effect>
-
-            <DockPanel Margin="18,18,18,14">
-
-                <!-- Header -->
-                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
-                    <Border Background="{DynamicResource PrimaryHueMidBrush}"
-                            CornerRadius="8" Padding="8,5" DockPanel.Dock="Left"
-                            VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CartOutline" Width="18" Height="18"
-                                                      Foreground="White" VerticalAlignment="Center"
-                                                      Margin="0,0,6,0"/>
-                            <TextBlock Text="Cart" FontSize="14" FontWeight="SemiBold"
-                                       Foreground="White" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                    <TextBlock x:Name="TxtCartCount" FontSize="12" Opacity="0.45"
-                               VerticalAlignment="Center" Margin="10,0,0,0" FontWeight="Medium"/>
-                </DockPanel>
-
-                <!-- Customer Name -->
-                <TextBox x:Name="TxtCustomerName" DockPanel.Dock="Top"
-                         materialDesign:HintAssist.Hint="Customer name (optional)"
-                         materialDesign:TextFieldAssist.HasLeadingIcon="True"
-                         materialDesign:TextFieldAssist.LeadingIcon="AccountOutline"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Margin="0,0,0,12" FontSize="13" Padding="10,8"/>
-
-                <!-- ═══ ACTION BUTTONS (bottom) ═══ -->
-                <StackPanel DockPanel.Dock="Bottom">
-                    <!-- CHARGE Button -->
-                    <Button x:Name="BtnCharge" Click="BtnCharge_Click"
-                            Height="50" FontSize="16" FontWeight="Bold"
-                            Margin="0,0,0,10"
-                            materialDesign:ButtonAssist.CornerRadius="10"
-                            HorizontalContentAlignment="Center">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                                <Setter Property="Background" Value="{StaticResource AccentGreen}"/>
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="BorderBrush" Value="{StaticResource AccentGreen}"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#059669"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CashRegister" Width="22" Height="22"
-                                                      VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <TextBlock x:Name="TxtChargeAmount" Text="CHARGE  &#x20B9;0.00"
-                                       VerticalAlignment="Center" FontWeight="Bold"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- Hold + Clear -->
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Height="38" FontSize="12"
-                                materialDesign:ButtonAssist.CornerRadius="8"
-                                Click="BtnHold_Click">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
-                                    <Setter Property="BorderBrush" Value="{StaticResource AccentAmber}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource AccentAmber}"/>
-                                </Style>
-                            </Button.Style>
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="PauseCircle" Width="16" Height="16"
-                                                          VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Text="Hold Order" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                        <Button Grid.Column="2" Height="38" FontSize="12"
-                                materialDesign:ButtonAssist.CornerRadius="8"
-                                Click="BtnClear_Click">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
-                                    <Setter Property="BorderBrush" Value="{StaticResource AccentRed}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource AccentRed}"/>
-                                </Style>
-                            </Button.Style>
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16"
-                                                          VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Text="Clear Cart" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </Grid>
-
-                    <ProgressBar x:Name="ProgressCharge"
-                                 Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                 IsIndeterminate="True" Visibility="Collapsed"
-                                 HorizontalAlignment="Center" Width="28" Height="28" Margin="0,6,0,0"/>
-                </StackPanel>
-
-                <!-- ═══ TOTALS SECTION (above buttons) ═══ -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,10">
-                    <Border Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,0,0,12"/>
-
-                    <!-- Subtotal -->
-                    <Grid Margin="0,0,0,6">
-                        <TextBlock Text="Subtotal" FontSize="13" Opacity="0.6"/>
-                        <TextBlock x:Name="TxtSubtotal" Text="&#x20B9;0.00" FontSize="13"
-                                   HorizontalAlignment="Right" FontWeight="Medium"/>
-                    </Grid>
-
-                    <!-- Discount Row -->
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Discount" FontSize="13" Opacity="0.6"
-                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <!-- Fixed / Percent toggle as two buttons -->
-                            <Border CornerRadius="6" BorderBrush="{DynamicResource MaterialDesignDivider}"
-                                    BorderThickness="1" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
-                                    <Button x:Name="BtnDiscountFixed" Content="&#x20B9;"
-                                            Style="{StaticResource DiscountTypeBtn}"
-                                            Click="BtnDiscountFixed_Click"
-                                            Background="{DynamicResource PrimaryHueLightBrush}"
-                                            Foreground="White"/>
-                                    <Button x:Name="BtnDiscountPercent" Content="%"
-                                            Style="{StaticResource DiscountTypeBtn}"
-                                            Click="BtnDiscountPercent_Click"/>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-
-                        <TextBox x:Name="TxtDiscountValue" Grid.Column="2" Text="0"
-                                 Width="75" FontSize="13" TextAlignment="Right"
-                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                 Padding="8,5"
-                                 materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                                 TextChanged="Discount_Changed"/>
-                    </Grid>
-
-                    <!-- Tax Breakdown -->
-                    <ItemsControl x:Name="TaxBreakdownList" Margin="0,2,0,0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,0,0,3">
-                                    <TextBlock FontSize="11.5" Opacity="0.5">
-                                        <Run Text="  "/>
-                                        <Run Text="{Binding TaxName}"/>
-                                    </TextBlock>
-                                    <TextBlock Text="{Binding FormattedAmount}" FontSize="11.5"
-                                               Opacity="0.5" HorizontalAlignment="Right"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                    <Border Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,10,0,10"/>
-
-                    <!-- Grand Total -->
-                    <Grid Margin="0,0,0,6">
-                        <TextBlock Text="TOTAL" FontSize="16" FontWeight="Bold"
-                                   VerticalAlignment="Center" Opacity="0.8"/>
-                        <TextBlock x:Name="TxtGrandTotal" Text="&#x20B9;0.00" FontSize="24" FontWeight="Bold"
-                                   HorizontalAlignment="Right"
-                                   Foreground="{DynamicResource PrimaryHueMidBrush}"/>
-                    </Grid>
-
-                    <!-- Payment Method -->
-                    <Border Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,6,0,10"/>
-
-                    <TextBlock Text="PAYMENT METHOD" FontSize="10" FontWeight="Bold"
-                               Opacity="0.35" Margin="0,0,0,8"/>
-
-                    <Grid Margin="0,0,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <RadioButton x:Name="RbCash" Grid.Column="0" IsChecked="True"
-                                     GroupName="PayMethod" Checked="PaymentMethod_Changed"
-                                     Style="{StaticResource MaterialDesignChoiceChipRadioButton}"
-                                     HorizontalContentAlignment="Center">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Cash" Width="16" Height="16"
-                                                          VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                <TextBlock Text="Cash" FontSize="12" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </RadioButton>
-
-                        <RadioButton x:Name="RbUpi" Grid.Column="2"
-                                     GroupName="PayMethod" Checked="PaymentMethod_Changed"
-                                     Style="{StaticResource MaterialDesignChoiceChipRadioButton}"
-                                     HorizontalContentAlignment="Center">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Cellphone" Width="16" Height="16"
-                                                          VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                <TextBlock Text="UPI" FontSize="12" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </RadioButton>
-
-                        <RadioButton x:Name="RbCard" Grid.Column="4"
-                                     GroupName="PayMethod" Checked="PaymentMethod_Changed"
-                                     Style="{StaticResource MaterialDesignChoiceChipRadioButton}"
-                                     HorizontalContentAlignment="Center">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="CreditCardOutline" Width="16" Height="16"
-                                                          VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                <TextBlock Text="Card" FontSize="12" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </RadioButton>
-                    </Grid>
-
-                    <!-- Cash: Amount Tendered + Change -->
-                    <StackPanel x:Name="CashPanel">
-                        <Grid Margin="0,0,0,6">
-                            <TextBlock Text="Amount Tendered" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center"/>
-                            <TextBox x:Name="TxtAmountTendered" Width="110" HorizontalAlignment="Right"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     Padding="8,5" FontSize="13" TextAlignment="Right"
-                                     materialDesign:HintAssist.Hint="0.00"
-                                     TextChanged="AmountTendered_Changed"/>
-                        </Grid>
+            <!-- Product Table -->
+            <Border CornerRadius="10" Background="{DynamicResource MaterialDesign.Brush.Card}">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" Opacity="0.04" ShadowDepth="2" Direction="270"/>
+                </Border.Effect>
+                <DockPanel>
+                    <!-- Table header -->
+                    <Border DockPanel.Dock="Top" Padding="16,10"
+                            Background="#FAFAFA"
+                            CornerRadius="10,10,0,0"
+                            BorderBrush="#0A000000" BorderThickness="0,0,0,1">
                         <Grid>
-                            <TextBlock Text="Change" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="TxtChange" Text="&#x20B9;0.00" FontSize="15" FontWeight="Bold"
-                                       HorizontalAlignment="Right" Foreground="{StaticResource AccentGreen}"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="90"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="PRODUCT" FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="#9E9E9E"/>
+                            <TextBlock Grid.Column="1" Text="CATEGORY" FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="#9E9E9E"/>
+                            <TextBlock Grid.Column="2" Text="STOCK" FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="#9E9E9E" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="PRICE" FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="#9E9E9E" HorizontalAlignment="Right"/>
                         </Grid>
-                    </StackPanel>
-                </StackPanel>
+                    </Border>
 
-                <!-- ═══ CART ITEMS (fills remaining space) ═══ -->
-                <Border CornerRadius="10" Margin="0,0,0,0"
-                        Background="{DynamicResource MaterialDesign.Brush.Background}">
                     <Grid>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="2">
-                            <ItemsControl x:Name="CartList" Margin="6">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="ProductGrid">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,6" Padding="12,10"
-                                                Background="{DynamicResource MaterialDesign.Brush.Card}"
-                                                CornerRadius="10">
-                                            <Border.Effect>
-                                                <DropShadowEffect BlurRadius="4" Opacity="0.04" ShadowDepth="1" Direction="270"/>
-                                            </Border.Effect>
+                                        <Border Style="{StaticResource ProductRowBorder}"
+                                                MouseLeftButtonUp="ProductCard_Click"
+                                                Tag="{Binding Id}">
                                             <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                </Grid.ColumnDefinitions>
 
-                                                <!-- Row 1: Name + Remove -->
-                                                <DockPanel Grid.Row="0">
-                                                    <TextBlock Text="{Binding Product.Name}" FontWeight="SemiBold"
-                                                               FontSize="13" TextTrimming="CharacterEllipsis"
-                                                               VerticalAlignment="Center" DockPanel.Dock="Left"
-                                                               MaxWidth="200"/>
-                                                    <Button HorizontalAlignment="Right"
-                                                            Style="{StaticResource MaterialDesignToolForegroundButton}"
-                                                            Width="26" Height="26" Padding="0"
-                                                            Click="BtnRemoveItem_Click"
-                                                            Tag="{Binding}" ToolTip="Remove item">
-                                                        <materialDesign:PackIcon Kind="CloseCircleOutline" Width="16" Height="16"
-                                                                                  Opacity="0.4"/>
-                                                    </Button>
-                                                </DockPanel>
+                                                <!-- Product name + SKU -->
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12.5"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Sku}" FontSize="10" Foreground="#BDBDBD"
+                                                               Margin="0,1,0,0"/>
+                                                </StackPanel>
 
-                                                <!-- Row 2: Qty controls + Price -->
-                                                <DockPanel Grid.Row="1" Margin="0,6,0,0">
-                                                    <!-- Qty Controls -->
-                                                    <Border DockPanel.Dock="Left" CornerRadius="8"
-                                                            BorderBrush="{DynamicResource MaterialDesignDivider}"
-                                                            BorderThickness="1" VerticalAlignment="Center">
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <Button Width="30" Height="30" Padding="0"
-                                                                    Click="BtnDecreaseQty_Click" Tag="{Binding}"
-                                                                    FontSize="16" Content="-"
-                                                                    materialDesign:ButtonAssist.CornerRadius="8"
-                                                                    Style="{StaticResource MaterialDesignFlatButton}"/>
-                                                            <TextBlock Text="{Binding FormattedQuantity}" FontSize="14"
-                                                                       FontWeight="Bold"
-                                                                       VerticalAlignment="Center" Margin="6,0"
-                                                                       MinWidth="24" TextAlignment="Center"/>
-                                                            <Button Width="30" Height="30" Padding="0"
-                                                                    Click="BtnIncreaseQty_Click" Tag="{Binding}"
-                                                                    FontSize="16" Content="+"
-                                                                    materialDesign:ButtonAssist.CornerRadius="8"
-                                                                    Style="{StaticResource MaterialDesignFlatButton}"/>
-                                                        </StackPanel>
-                                                    </Border>
+                                                <!-- Category -->
+                                                <TextBlock Grid.Column="1" Text="{Binding CategoryName}" FontSize="11.5"
+                                                           Foreground="#9E9E9E" VerticalAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis"/>
 
-                                                    <!-- Price -->
-                                                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                        <TextBlock Text="{Binding FormattedUnitPrice}" FontSize="10.5"
-                                                                   Opacity="0.4" HorizontalAlignment="Right"/>
-                                                        <TextBlock Text="{Binding FormattedLineTotal}" FontWeight="Bold"
-                                                                   FontSize="14.5" HorizontalAlignment="Right"
-                                                                   Foreground="{DynamicResource PrimaryHueMidBrush}"/>
-                                                    </StackPanel>
-                                                </DockPanel>
+                                                <!-- Stock badge -->
+                                                <Border Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                        CornerRadius="10" Padding="8,3">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="#E8F5E9"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                                                    <Setter Property="Background" Value="#FEF2F2"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock Text="{Binding StockDisplay}" FontSize="10" FontWeight="Medium">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Foreground" Value="#2E7D32"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                                                        <Setter Property="Foreground" Value="#DC2626"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+
+                                                <!-- Price -->
+                                                <TextBlock Grid.Column="3" FontSize="13" FontWeight="Bold"
+                                                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                                                           Foreground="{StaticResource Purple}">
+                                                    <Run Text="&#x20B9;"/><Run Text="{Binding SellingPrice, StringFormat=\{0:N2\}}"/>
+                                                </TextBlock>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -503,17 +247,398 @@
                             </ItemsControl>
                         </ScrollViewer>
 
-                        <!-- Empty cart message -->
-                        <StackPanel x:Name="TxtCartEmpty" Visibility="Visible"
+                        <!-- Loading -->
+                        <ProgressBar x:Name="ProgressLoad"
+                                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                     IsIndeterminate="True" Visibility="Collapsed"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                                     Width="40" Height="40"/>
+
+                        <!-- Empty -->
+                        <StackPanel x:Name="TxtEmpty" Visibility="Collapsed"
                                     HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <materialDesign:PackIcon Kind="CartOff" Width="40" Height="40"
-                                                      Opacity="0.15" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Tap products to add" FontSize="13" Opacity="0.25"
+                            <materialDesign:PackIcon Kind="PackageVariantRemove"
+                                                      Width="44" Height="44" Opacity="0.12"
+                                                      HorizontalAlignment="Center"/>
+                            <TextBlock Text="No products found" FontSize="13" Opacity="0.25"
                                        HorizontalAlignment="Center" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Grid>
+                </DockPanel>
+            </Border>
+        </DockPanel>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- RIGHT: CART + CHECKOUT                             -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <Border Grid.Column="1"
+                Background="{DynamicResource MaterialDesign.Brush.Card}"
+                BorderBrush="#0A000000" BorderThickness="1,0,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- ── Cart Header ── -->
+                <Border Grid.Row="0" Padding="16,12,16,10"
+                        BorderBrush="#08000000" BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Title row -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                            <Border Background="#7C4DFF" CornerRadius="6" Padding="10,5">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="CartOutline" Width="15" Height="15"
+                                                              Foreground="White" VerticalAlignment="Center"
+                                                              Margin="0,0,6,0"/>
+                                    <TextBlock Text="Cart" FontSize="13" FontWeight="SemiBold"
+                                               Foreground="White" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock x:Name="TxtCartCount" FontSize="12" Foreground="#BDBDBD"
+                                       VerticalAlignment="Center" Margin="10,0,0,0" FontWeight="Medium"/>
+                        </StackPanel>
+
+                        <!-- Customer input -->
+                        <TextBox x:Name="TxtCustomerName" Grid.Row="1"
+                                 materialDesign:HintAssist.Hint="Customer name (optional)"
+                                 materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                                 materialDesign:TextFieldAssist.LeadingIcon="AccountOutline"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 FontSize="12" Padding="6,4"
+                                 materialDesign:HintAssist.FloatingOffset="0,-18"/>
+                    </Grid>
                 </Border>
-            </DockPanel>
+
+                <!-- ── Cart Items ── -->
+                <Grid Grid.Row="1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                        <ItemsControl x:Name="CartList" Margin="2,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource CartRowBorder}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Text="{Binding Product.Name}"
+                                                       FontWeight="Medium" FontSize="12.5"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+
+                                            <!-- Qty controls -->
+                                            <Border Grid.Column="1" CornerRadius="6"
+                                                    Background="#F5F5F5"
+                                                    VerticalAlignment="Center"
+                                                    Margin="0,0,10,0" Padding="1">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Width="26" Height="26" Padding="0"
+                                                            Click="BtnDecreaseQty_Click" Tag="{Binding}"
+                                                            FontSize="13" Content="-"
+                                                            materialDesign:ButtonAssist.CornerRadius="5"
+                                                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                                                    <TextBlock Text="{Binding FormattedQuantity}" FontSize="12.5"
+                                                               FontWeight="Bold"
+                                                               VerticalAlignment="Center" Margin="5,0"
+                                                               MinWidth="18" TextAlignment="Center"/>
+                                                    <Button Width="26" Height="26" Padding="0"
+                                                            Click="BtnIncreaseQty_Click" Tag="{Binding}"
+                                                            FontSize="13" Content="+"
+                                                            materialDesign:ButtonAssist.CornerRadius="5"
+                                                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Price + Remove -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                                        VerticalAlignment="Center">
+                                                <StackPanel VerticalAlignment="Center" Margin="0,0,2,0">
+                                                    <TextBlock Text="{Binding FormattedLineTotal}" FontWeight="Bold"
+                                                               FontSize="12.5" HorizontalAlignment="Right"
+                                                               Foreground="{StaticResource Purple}"/>
+                                                    <TextBlock Text="{Binding FormattedUnitPrice}" FontSize="9.5"
+                                                               Foreground="#BDBDBD" HorizontalAlignment="Right"/>
+                                                </StackPanel>
+                                                <Button Style="{StaticResource MaterialDesignToolForegroundButton}"
+                                                        Width="22" Height="22" Padding="0"
+                                                        Click="BtnRemoveItem_Click"
+                                                        Tag="{Binding}" ToolTip="Remove">
+                                                    <materialDesign:PackIcon Kind="Close" Width="13" Height="13"
+                                                                              Foreground="#BDBDBD"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- Empty cart -->
+                    <StackPanel x:Name="TxtCartEmpty" Visibility="Visible"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Border Background="#F5F5F5" CornerRadius="40" Width="64" Height="64"
+                                HorizontalAlignment="Center" Margin="0,0,0,8">
+                            <materialDesign:PackIcon Kind="CartOff" Width="28" Height="28"
+                                                      Foreground="#BDBDBD" HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Cart is empty" FontSize="13" Foreground="#BDBDBD"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Click products to add them" FontSize="11" Foreground="#E0E0E0"
+                                   HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- ── Checkout Panel ── -->
+                <Border Grid.Row="2" BorderBrush="#0A000000" BorderThickness="0,1,0,0">
+                    <StackPanel Margin="16,10,16,12">
+
+                        <!-- Subtotal -->
+                        <Grid Margin="0,0,0,3">
+                            <TextBlock Text="Subtotal" FontSize="12" Foreground="#9E9E9E" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtSubtotal" Text="&#x20B9;0.00" FontSize="12"
+                                       FontWeight="Medium" HorizontalAlignment="Right"/>
+                        </Grid>
+
+                        <!-- Discount -->
+                        <Grid Margin="0,0,0,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Discount" FontSize="12" Foreground="#9E9E9E"
+                                       VerticalAlignment="Center"/>
+
+                            <Border Grid.Column="2" CornerRadius="4"
+                                    BorderBrush="#E0E0E0" BorderThickness="1" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton x:Name="RbDiscountFixed" Content="&#x20B9;"
+                                                 GroupName="DiscountType" IsChecked="True"
+                                                 Style="{StaticResource DiscountToggleRadio}"
+                                                 Checked="DiscountType_Changed"/>
+                                    <RadioButton x:Name="RbDiscountPercent" Content="%"
+                                                 GroupName="DiscountType"
+                                                 Style="{StaticResource DiscountToggleRadio}"
+                                                 Checked="DiscountType_Changed"/>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBox x:Name="TxtDiscountValue" Grid.Column="4" Text="0"
+                                     Width="60" FontSize="12" TextAlignment="Right"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     Padding="4,3"
+                                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                     TextChanged="Discount_Changed"/>
+                        </Grid>
+
+                        <!-- Tax breakdown -->
+                        <ItemsControl x:Name="TaxBreakdownList" Margin="0,0,0,1">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,1">
+                                        <TextBlock FontSize="10.5" Foreground="#BDBDBD">
+                                            <Run Text="  "/><Run Text="{Binding TaxName}"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding FormattedAmount}" FontSize="10.5"
+                                                   Foreground="#BDBDBD" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Divider -->
+                        <Border Height="1" Background="#E0E0E0" Margin="0,6,0,6"/>
+
+                        <!-- Grand Total -->
+                        <Grid Margin="0,0,0,10">
+                            <TextBlock Text="TOTAL" FontSize="13" FontWeight="Bold" Foreground="#9E9E9E"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtGrandTotal" Text="&#x20B9;0.00" FontSize="22" FontWeight="Bold"
+                                       HorizontalAlignment="Right" Foreground="#7C4DFF"/>
+                        </Grid>
+
+                        <!-- Payment Methods -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <RadioButton x:Name="RbCash" Grid.Column="0" IsChecked="True"
+                                         GroupName="PayMethod" Checked="PaymentMethod_Changed"
+                                         Style="{StaticResource PayMethodRadio}">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="Cash" Width="18" Height="18"
+                                                              HorizontalAlignment="Center" Margin="0,0,0,2"
+                                                              Foreground="#43A047"/>
+                                    <TextBlock Text="Cash" FontSize="10.5" FontWeight="Medium"
+                                               HorizontalAlignment="Center" Foreground="#666"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton x:Name="RbUpi" Grid.Column="2"
+                                         GroupName="PayMethod" Checked="PaymentMethod_Changed"
+                                         Style="{StaticResource PayMethodRadio}">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="Cellphone" Width="18" Height="18"
+                                                              HorizontalAlignment="Center" Margin="0,0,0,2"
+                                                              Foreground="#7C4DFF"/>
+                                    <TextBlock Text="UPI" FontSize="10.5" FontWeight="Medium"
+                                               HorizontalAlignment="Center" Foreground="#666"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton x:Name="RbCard" Grid.Column="4"
+                                         GroupName="PayMethod" Checked="PaymentMethod_Changed"
+                                         Style="{StaticResource PayMethodRadio}">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="CreditCardOutline" Width="18" Height="18"
+                                                              HorizontalAlignment="Center" Margin="0,0,0,2"
+                                                              Foreground="#1565C0"/>
+                                    <TextBlock Text="Card" FontSize="10.5" FontWeight="Medium"
+                                               HorizontalAlignment="Center" Foreground="#666"/>
+                                </StackPanel>
+                            </RadioButton>
+                        </Grid>
+
+                        <!-- UPI QR Panel -->
+                        <Border x:Name="UpiPanel" Visibility="Collapsed"
+                                CornerRadius="8" Margin="0,0,0,6" Padding="10"
+                                Background="#F8F5FF" BorderBrush="#E0D5F5" BorderThickness="1">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="Scan to Pay via UPI" FontSize="10.5" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" Foreground="#7C4DFF" Margin="0,0,0,6"/>
+                                <Border x:Name="QrCodeContainer" Background="White" CornerRadius="6"
+                                        Padding="6" HorizontalAlignment="Center" Margin="0,0,0,6">
+                                    <Image x:Name="ImgQrCode" Width="120" Height="120"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                </Border>
+                                <TextBlock x:Name="TxtUpiId" FontSize="9.5" Foreground="#BDBDBD"
+                                           HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="TxtUpiAmount" FontSize="12" FontWeight="Bold"
+                                           HorizontalAlignment="Center" Foreground="#7C4DFF" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card Panel -->
+                        <Border x:Name="CardPanel" Visibility="Collapsed"
+                                CornerRadius="8" Margin="0,0,0,6" Padding="10"
+                                Background="#F5F8FF" BorderBrush="#D5E2F5" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtCardGateway" FontSize="10.5" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" Foreground="#1565C0"/>
+                                <TextBlock x:Name="TxtCardGatewayInfo" FontSize="9.5" Foreground="#BDBDBD"
+                                           HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Cash tendered / change -->
+                        <StackPanel x:Name="CashPanel">
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="Tendered" FontSize="12" Foreground="#9E9E9E" VerticalAlignment="Center"/>
+                                <TextBox x:Name="TxtAmountTendered" Width="90" HorizontalAlignment="Right"
+                                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                         Padding="5,3" FontSize="12" TextAlignment="Right"
+                                         materialDesign:HintAssist.Hint="0.00"
+                                         TextChanged="AmountTendered_Changed"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="Change" FontSize="12" Foreground="#9E9E9E" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TxtChange" Text="&#x20B9;0.00" FontSize="13" FontWeight="Bold"
+                                           HorizontalAlignment="Right" Foreground="{StaticResource AccentGreen}"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- CHARGE button -->
+                        <Button x:Name="BtnCharge" Click="BtnCharge_Click"
+                                Height="44" FontSize="14" FontWeight="Bold"
+                                Margin="0,4,0,6"
+                                materialDesign:ButtonAssist.CornerRadius="8"
+                                HorizontalContentAlignment="Center">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                                    <Setter Property="Background" Value="#10B981"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="#10B981"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#059669"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CashRegister" Width="18" Height="18"
+                                                          VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock x:Name="TxtChargeAmount" Text="CHARGE  &#x20B9;0.00"
+                                           VerticalAlignment="Center" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Hold / Clear -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Height="32" FontSize="10.5"
+                                    materialDesign:ButtonAssist.CornerRadius="6"
+                                    Click="BtnHold_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                                        <Setter Property="BorderBrush" Value="{StaticResource AccentAmber}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource AccentAmber}"/>
+                                    </Style>
+                                </Button.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="PauseCircle" Width="14" Height="14"
+                                                              VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="Hold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="2" Height="32" FontSize="10.5"
+                                    materialDesign:ButtonAssist.CornerRadius="6"
+                                    Click="BtnClear_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                                        <Setter Property="BorderBrush" Value="{StaticResource AccentRed}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource AccentRed}"/>
+                                    </Style>
+                                </Button.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="14" Height="14"
+                                                              VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="Clear" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <ProgressBar x:Name="ProgressCharge"
+                                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                     IsIndeterminate="True" Visibility="Collapsed"
+                                     HorizontalAlignment="Center" Width="24" Height="24" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

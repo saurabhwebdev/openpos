@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,6 +15,7 @@ public partial class InventoryProductsView : UserControl
     private List<Category> _categories = new();
     private List<Unit> _units = new();
     private List<TaxSlab> _taxSlabs = new();
+    private List<Supplier> _suppliers = new();
     private Product? _editing;
     private Product? _viewing;
     private bool _isNewProduct;
@@ -38,10 +40,12 @@ public partial class InventoryProductsView : UserControl
         _categories = await InventoryService.GetActiveCategoriesAsync(Session.CurrentTenant.Id);
         _units = await InventoryService.GetActiveUnitsAsync(Session.CurrentTenant.Id);
         _taxSlabs = await TaxService.GetTaxSlabsAsync(Session.CurrentTenant.Id, country);
+        _suppliers = await InventoryService.GetActiveSuppliersAsync(Session.CurrentTenant.Id);
 
         CmbCategory.ItemsSource = _categories;
         CmbUnit.ItemsSource = _units;
         CmbTaxSlab.ItemsSource = _taxSlabs;
+        CmbSupplier.ItemsSource = _suppliers;
 
         _products = await InventoryService.GetProductsAsync(Session.CurrentTenant.Id);
         ProductList.ItemsSource = _products;
@@ -77,6 +81,7 @@ public partial class InventoryProductsView : UserControl
         TxtDetailBarcode.Text = string.IsNullOrEmpty(_viewing.Barcode) ? "-" : _viewing.Barcode;
         TxtDetailCategory.Text = string.IsNullOrEmpty(_viewing.CategoryName) ? "-" : _viewing.CategoryName;
         TxtDetailUnit.Text = string.IsNullOrEmpty(_viewing.UnitName) ? "-" : _viewing.UnitName;
+        TxtDetailSupplier.Text = string.IsNullOrEmpty(_viewing.SupplierName) ? "-" : _viewing.SupplierName;
         TxtDetailHsn.Text = string.IsNullOrEmpty(_viewing.HsnCode) ? "-" : _viewing.HsnCode;
         TxtDetailTax.Text = string.IsNullOrEmpty(_viewing.TaxSlabName) ? "-" : _viewing.TaxSlabName;
         TxtDetailCost.Text = $"{_currencySymbol} {_viewing.CostPrice:N2}";
@@ -160,6 +165,7 @@ public partial class InventoryProductsView : UserControl
         _editing.CategoryId = CmbCategory.SelectedValue as int?;
         _editing.UnitId = CmbUnit.SelectedValue as int?;
         _editing.TaxSlabId = CmbTaxSlab.SelectedValue as int?;
+        _editing.SupplierId = CmbSupplier.SelectedValue as int?;
 
         if (!decimal.TryParse(TxtCostPrice.Text, out var cost)) cost = 0;
         _editing.CostPrice = cost;
@@ -220,6 +226,7 @@ public partial class InventoryProductsView : UserControl
         CmbCategory.SelectedIndex = -1;
         CmbUnit.SelectedIndex = -1;
         CmbTaxSlab.SelectedIndex = -1;
+        CmbSupplier.SelectedIndex = -1;
         TxtMessage.Visibility = Visibility.Collapsed;
     }
 
@@ -239,6 +246,7 @@ public partial class InventoryProductsView : UserControl
         CmbCategory.SelectedValue = p.CategoryId;
         CmbUnit.SelectedValue = p.UnitId;
         CmbTaxSlab.SelectedValue = p.TaxSlabId;
+        CmbSupplier.SelectedValue = p.SupplierId;
         TxtMessage.Visibility = Visibility.Collapsed;
     }
 
@@ -275,6 +283,41 @@ public partial class InventoryProductsView : UserControl
     }
 
     #endregion
+
+    private async void BtnImportExcel_Click(object sender, RoutedEventArgs e)
+    {
+        if (Session.CurrentTenant == null) return;
+
+        var dlg = new OpenFileDialog
+        {
+            Title = "Import Products from Excel",
+            Filter = "Excel Files|*.xlsx;*.xls",
+            Multiselect = false
+        };
+
+        if (dlg.ShowDialog() != true) return;
+
+        ProgressLoad.Visibility = Visibility.Visible;
+
+        try
+        {
+            var (imported, skipped, message) = await Task.Run(() =>
+                ExcelImportService.ImportProductsAsync(dlg.FileName, Session.CurrentTenant.Id));
+
+            MessageBox.Show(message, "Import Complete", MessageBoxButton.OK,
+                imported > 0 ? MessageBoxImage.Information : MessageBoxImage.Warning);
+
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Import failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            ProgressLoad.Visibility = Visibility.Collapsed;
+        }
+    }
 
     private void ShowMessage(string message, bool isSuccess)
     {

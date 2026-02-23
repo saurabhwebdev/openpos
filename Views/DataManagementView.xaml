@@ -3,39 +3,275 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Margin="40">
-
-            <!-- Icon -->
-            <Border Width="90" Height="90" CornerRadius="45"
-                    HorizontalAlignment="Center" Margin="0,0,0,28">
-                <Border.Background>
-                    <SolidColorBrush Color="{DynamicResource Primary200}" Opacity="0.3"/>
-                </Border.Background>
-                <materialDesign:PackIcon Kind="DatabaseOutline" Width="44" Height="44"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Foreground="{DynamicResource PrimaryHueMidBrush}"/>
-            </Border>
-
-            <!-- Title -->
-            <TextBlock Text="Data Management"
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="40,32,40,40">
+            <!-- Page Header -->
+            <TextBlock Text="Reports"
                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                       HorizontalAlignment="Center" Margin="0,0,0,8"/>
-
-            <!-- Coming Soon badge -->
-            <Border Background="{DynamicResource PrimaryHueMidBrush}"
-                    CornerRadius="12" Padding="16,6"
-                    HorizontalAlignment="Center" Margin="0,0,0,16">
-                <TextBlock Text="COMING SOON" FontSize="12" FontWeight="SemiBold"
-                           Foreground="White"/>
-            </Border>
-
-            <!-- Description -->
-            <TextBlock Text="CRUD operations, data grids, and record management&#x0a;are on the way. Check back soon."
+                       Margin="0,0,0,4"/>
+            <TextBlock Text="Generate, export and email business reports as PDF"
                        Style="{StaticResource MaterialDesignBody1TextBlock}"
-                       HorizontalAlignment="Center" Opacity="0.5"
-                       TextAlignment="Center" MaxWidth="400" LineHeight="22"/>
+                       Opacity="0.5" Margin="0,0,0,24"/>
+
+            <!-- Date Range Selector -->
+            <materialDesign:Card Padding="20" UniformCornerRadius="12" Margin="0,0,0,20">
+                <DockPanel>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Kind="CalendarRange" Width="20" Height="20"
+                                                  VerticalAlignment="Center" Margin="0,0,10,0" Opacity="0.6"/>
+                        <TextBlock Text="Date Range" FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                        <DatePicker x:Name="DpFrom" Width="140" FontSize="13"
+                                    materialDesign:HintAssist.Hint="From" Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
+                        <TextBlock Text="to" VerticalAlignment="Center" Margin="10,0" Opacity="0.5"/>
+                        <DatePicker x:Name="DpTo" Width="140" FontSize="13"
+                                    materialDesign:HintAssist.Hint="To" Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
+                        <Button Content="Today" Style="{StaticResource MaterialDesignFlatButton}" Click="BtnToday_Click" Margin="8,0,0,0" FontSize="12"/>
+                        <Button Content="This Week" Style="{StaticResource MaterialDesignFlatButton}" Click="BtnThisWeek_Click" FontSize="12"/>
+                        <Button Content="This Month" Style="{StaticResource MaterialDesignFlatButton}" Click="BtnThisMonth_Click" FontSize="12"/>
+                    </StackPanel>
+                </DockPanel>
+            </materialDesign:Card>
+
+            <!-- Consolidated Report Card -->
+            <materialDesign:Card Padding="24" UniformCornerRadius="12" Margin="0,0,0,20">
+                <DockPanel>
+                    <Border Width="52" Height="52" CornerRadius="26" Background="#E8EAF6"
+                            DockPanel.Dock="Left" Margin="0,0,20,0" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Kind="FileDocumentMultipleOutline" Width="26" Height="26"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  Foreground="#283593"/>
+                    </Border>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Click="BtnConsolidated_Click" Height="36"
+                                Style="{StaticResource MaterialDesignRaisedButton}" Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="FileDownloadOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Text="Export PDF" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Click="BtnEmailConsolidated_Click" Height="36"
+                                Style="{StaticResource MaterialDesignOutlinedButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Consolidated Report" FontSize="17" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="All-in-one report with sales summary, daily transactions, product sales, tax collection, inventory, and low stock alerts in a single PDF."
+                                   FontSize="12" Opacity="0.5" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </DockPanel>
+            </materialDesign:Card>
+
+            <!-- Report Cards Grid -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Daily Sales -->
+                <materialDesign:Card Grid.Row="0" Grid.Column="0" Padding="24" UniformCornerRadius="12">
+                    <StackPanel>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="#E3F2FD" HorizontalAlignment="Left" Margin="0,0,0,14">
+                            <materialDesign:PackIcon Kind="CashRegister" Width="24" Height="24"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      Foreground="#1565C0"/>
+                        </Border>
+                        <TextBlock Text="Daily Sales" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="All transactions for a selected date with invoice details, payment methods, and totals."
+                                   FontSize="12" Opacity="0.5" TextWrapping="Wrap" Margin="0,0,0,16" Height="50"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Click="BtnDailySales_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileDownloadOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Export PDF" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="BtnEmailDailySales_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Sales Summary -->
+                <materialDesign:Card Grid.Row="0" Grid.Column="2" Padding="24" UniformCornerRadius="12">
+                    <StackPanel>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="#E8F5E9" HorizontalAlignment="Left" Margin="0,0,0,14">
+                            <materialDesign:PackIcon Kind="ChartLine" Width="24" Height="24"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      Foreground="#2E7D32"/>
+                        </Border>
+                        <TextBlock Text="Sales Summary" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Revenue overview with total sales, tax collected, discounts, and payment method breakdown."
+                                   FontSize="12" Opacity="0.5" TextWrapping="Wrap" Margin="0,0,0,16" Height="50"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Click="BtnSalesSummary_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileDownloadOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Export PDF" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="BtnEmailSalesSummary_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Product Sales -->
+                <materialDesign:Card Grid.Row="0" Grid.Column="4" Padding="24" UniformCornerRadius="12">
+                    <StackPanel>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="#FFF3E0" HorizontalAlignment="Left" Margin="0,0,0,14">
+                            <materialDesign:PackIcon Kind="PackageVariantClosed" Width="24" Height="24"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      Foreground="#E65100"/>
+                        </Border>
+                        <TextBlock Text="Product Sales" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Product-wise sales breakdown with quantity sold, revenue, and tax collected per item."
+                                   FontSize="12" Opacity="0.5" TextWrapping="Wrap" Margin="0,0,0,16" Height="50"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Click="BtnProductSales_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileDownloadOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Export PDF" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="BtnEmailProductSales_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Inventory Report -->
+                <materialDesign:Card Grid.Row="2" Grid.Column="0" Padding="24" UniformCornerRadius="12">
+                    <StackPanel>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="#F3E5F5" HorizontalAlignment="Left" Margin="0,0,0,14">
+                            <materialDesign:PackIcon Kind="ClipboardTextOutline" Width="24" Height="24"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      Foreground="#7B1FA2"/>
+                        </Border>
+                        <TextBlock Text="Inventory Report" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Complete product inventory with stock levels, pricing, suppliers, and total stock value."
+                                   FontSize="12" Opacity="0.5" TextWrapping="Wrap" Margin="0,0,0,16" Height="50"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Click="BtnInventory_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileDownloadOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Export PDF" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="BtnEmailInventory_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Low Stock Alert -->
+                <materialDesign:Card Grid.Row="2" Grid.Column="2" Padding="24" UniformCornerRadius="12">
+                    <StackPanel>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="#FFEBEE" HorizontalAlignment="Left" Margin="0,0,0,14">
+                            <materialDesign:PackIcon Kind="AlertCircleOutline" Width="24" Height="24"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      Foreground="#C62828"/>
+                        </Border>
+                        <TextBlock Text="Low Stock Alert" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Products below minimum stock level with supplier info for quick reordering."
+                                   FontSize="12" Opacity="0.5" TextWrapping="Wrap" Margin="0,0,0,16" Height="50"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Click="BtnLowStock_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileDownloadOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Export PDF" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="BtnEmailLowStock_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Tax Collection -->
+                <materialDesign:Card Grid.Row="2" Grid.Column="4" Padding="24" UniformCornerRadius="12">
+                    <StackPanel>
+                        <Border Width="48" Height="48" CornerRadius="24" Background="#E0F2F1" HorizontalAlignment="Left" Margin="0,0,0,14">
+                            <materialDesign:PackIcon Kind="ReceiptTextOutline" Width="24" Height="24"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      Foreground="#00695C"/>
+                        </Border>
+                        <TextBlock Text="Tax Collection" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Tax slab-wise collection summary with taxable amounts and GST breakdown."
+                                   FontSize="12" Opacity="0.5" TextWrapping="Wrap" Margin="0,0,0,16" Height="50"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Click="BtnTaxCollection_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileDownloadOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Export PDF" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="BtnEmailTaxCollection_Click" Height="34"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+            </Grid>
+
+            <!-- Status Bar -->
+            <materialDesign:Card Padding="16" UniformCornerRadius="12" Margin="0,20,0,0">
+                <DockPanel>
+                    <ProgressBar x:Name="ProgressBar"
+                                 Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                 IsIndeterminate="True" Visibility="Collapsed"
+                                 Width="24" Height="24" DockPanel.Dock="Left" Margin="0,0,12,0"/>
+                    <TextBlock x:Name="TxtStatus" FontSize="13" VerticalAlignment="Center"
+                               Text="Select a report and click Export PDF or Email to generate." Opacity="0.5"/>
+                </DockPanel>
+            </materialDesign:Card>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>

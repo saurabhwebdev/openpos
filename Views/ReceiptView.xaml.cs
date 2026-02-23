@@ -1,7 +1,10 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using MyWinFormsApp.Helpers;
 using MyWinFormsApp.Models;
+using MyWinFormsApp.Services;
 
 namespace MyWinFormsApp.Views;
 
@@ -11,6 +14,7 @@ public partial class ReceiptView : Border
     private readonly List<InvoiceItem> _items;
     private readonly BusinessDetails? _business;
     private readonly Dictionary<int, TaxSlab> _taxSlabs;
+    private string? _generatedPdfPath;
 
     public ReceiptView(Invoice invoice, List<InvoiceItem> items,
         BusinessDetails? business, Dictionary<int, TaxSlab> taxSlabs)
@@ -223,6 +227,16 @@ public partial class ReceiptView : Border
         });
     }
 
+    private string EnsureInvoicePdf()
+    {
+        if (_generatedPdfPath != null) return _generatedPdfPath;
+
+        var currency = _business?.CurrencySymbol ?? "\u20b9";
+        _generatedPdfPath = PdfExportService.GenerateInvoicePdf(
+            _business!, _invoice, _items, _taxSlabs, currency);
+        return _generatedPdfPath;
+    }
+
     private void BtnPrint_Click(object sender, RoutedEventArgs e)
     {
         try
@@ -237,6 +251,100 @@ public partial class ReceiptView : Border
         {
             MessageBox.Show($"Print error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private async void BtnEmailInvoice_Click(object sender, RoutedEventArgs e)
+    {
+        if (Session.CurrentTenant == null || _business == null) return;
+
+        var emailSettings = await EmailService.GetAsync(Session.CurrentTenant.Id);
+        if (emailSettings == null || !emailSettings.IsActive)
+        {
+            ShowShareStatus("Please configure email in Settings first.", false);
+            return;
+        }
+
+        // Show email input dialog
+        var dialog = new EmailInputDialog();
+        var mw = Window.GetWindow(this) as MainWindow;
+        if (mw != null)
+        {
+            dialog.Owner = mw;
+        }
+
+        if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.EmailAddress))
+        {
+            ShowShareStatus("Sending email...", true);
+
+            try
+            {
+                var pdfPath = await Task.Run(() => EnsureInvoicePdf());
+
+                var (success, message) = await EmailService.SendInvoiceEmailAsync(
+                    emailSettings, dialog.EmailAddress, pdfPath,
+                    _invoice.InvoiceNumber, _business.BusinessName);
+
+                ShowShareStatus(message, success);
+            }
+            catch (Exception ex)
+            {
+                ShowShareStatus($"Error: {ex.Message}", false);
+            }
+        }
+    }
+
+    private void BtnWhatsApp_Click(object sender, RoutedEventArgs e)
+    {
+        if (_business == null) return;
+
+        // Show phone input dialog
+        var dialog = new PhoneInputDialog();
+        var mw = Window.GetWindow(this) as MainWindow;
+        if (mw != null)
+        {
+            dialog.Owner = mw;
+        }
+
+        if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.PhoneNumber))
+        {
+            var phone = dialog.PhoneNumber.Trim().Replace(" ", "").Replace("-", "");
+            if (!phone.StartsWith("+"))
+                phone = "+91" + phone; // Default to India
+
+            var currency = _business.CurrencySymbol ?? "\u20b9";
+            var itemLines = string.Join("\n", _items.Select(i =>
+                $"  {i.ProductName} x{i.Quantity:0.##} = {currency}{i.LineTotal:N2}"));
+
+            var message = $"*Invoice {_invoice.InvoiceNumber}*\n" +
+                          $"From: {_business.BusinessName}\n" +
+                          $"Date: {_invoice.CreatedAt:dd MMM yyyy}\n\n" +
+                          $"Items:\n{itemLines}\n\n" +
+                          $"*Total: {currency}{_invoice.TotalAmount:N2}*\n" +
+                          $"Payment: {_invoice.PaymentMethodDisplay}\n\n" +
+                          "Thank you for your business!";
+
+            var encoded = Uri.EscapeDataString(message);
+            var url = $"https://wa.me/{phone}?text={encoded}";
+
+            try
+            {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                ShowShareStatus("WhatsApp opened!", true);
+            }
+            catch (Exception ex)
+            {
+                ShowShareStatus($"Could not open WhatsApp: {ex.Message}", false);
+            }
+        }
+    }
+
+    private void ShowShareStatus(string message, bool isSuccess)
+    {
+        TxtShareStatus.Text = message;
+        TxtShareStatus.Visibility = Visibility.Visible;
+        TxtShareStatus.Foreground = isSuccess
+            ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10B981"))
+            : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444"));
     }
 
     private void BtnClose_Click(object sender, RoutedEventArgs e)

@@ -29,7 +29,11 @@
                         Margin="0,0,4,0"/>
                 <Button x:Name="BtnTabUnits" Content="Units"
                         Style="{StaticResource MaterialDesignFlatButton}"
-                        Click="BtnTabUnits_Click" FontSize="14" Padding="16,8"/>
+                        Click="BtnTabUnits_Click" FontSize="14" Padding="16,8"
+                        Margin="0,0,4,0"/>
+                <Button x:Name="BtnTabSuppliers" Content="Suppliers"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Click="BtnTabSuppliers_Click" FontSize="14" Padding="16,8"/>
             </StackPanel>
             <Border Height="1" Background="{DynamicResource MaterialDesignDivider}"/>
         </StackPanel>

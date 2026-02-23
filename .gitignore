@@ -22,6 +22,9 @@ x86/
 ## Rider / JetBrains
 .idea/
 
+## Installer publish output
+installer/publish/
+
 ## OS files
 Thumbs.db
 .DS_Store

@@ -9,13 +9,14 @@ public partial class InventoryView : UserControl
     private InventoryCategoriesView? _categoriesView;
     private InventoryStockView? _stockView;
     private InventoryUnitsView? _unitsView;
+    private InventorySuppliersView? _suppliersView;
 
     private Button[] _tabButtons = [];
 
     public InventoryView()
     {
         InitializeComponent();
-        _tabButtons = [BtnTabProducts, BtnTabCategories, BtnTabStock, BtnTabUnits];
+        _tabButtons = [BtnTabProducts, BtnTabCategories, BtnTabStock, BtnTabUnits, BtnTabSuppliers];
         ShowTab("products");
     }
 
@@ -23,6 +24,7 @@ public partial class InventoryView : UserControl
     private void BtnTabCategories_Click(object sender, RoutedEventArgs e) => ShowTab("categories");
     private void BtnTabStock_Click(object sender, RoutedEventArgs e) => ShowTab("stock");
     private void BtnTabUnits_Click(object sender, RoutedEventArgs e) => ShowTab("units");
+    private void BtnTabSuppliers_Click(object sender, RoutedEventArgs e) => ShowTab("suppliers");
 
     private void ShowTab(string tab)
     {
@@ -57,6 +59,12 @@ public partial class InventoryView : UserControl
                 InventoryContent.Content = _unitsView;
                 BtnTabUnits.FontWeight = FontWeights.Bold;
                 BtnTabUnits.Opacity = 1.0;
+                break;
+            case "suppliers":
+                _suppliersView ??= new InventorySuppliersView();
+                InventoryContent.Content = _suppliersView;
+                BtnTabSuppliers.FontWeight = FontWeights.Bold;
+                BtnTabSuppliers.Opacity = 1.0;
                 break;
         }
     }

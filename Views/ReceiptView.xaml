@@ -24,25 +24,48 @@
         </Border>
 
         <!-- Action Buttons -->
-        <Border DockPanel.Dock="Bottom" Padding="20,12"
+        <Border DockPanel.Dock="Bottom" Padding="16,10"
                 BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,1,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Print Receipt" Click="BtnPrint_Click"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        Margin="0,0,12,0" Padding="20,8" Height="38">
-                    <Button.ContentTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Printer" Width="18" Height="18"
-                                                          VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <TextBlock Text="Print Receipt" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </Button.ContentTemplate>
-                </Button>
+            <StackPanel>
+                <!-- Share Buttons Row -->
+                <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,8">
+                    <Button Click="BtnPrint_Click"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="0,0,8,0" Padding="12,6" Height="34" FontSize="12">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Printer" Width="16" Height="16"
+                                                      VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Print" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="BtnEmailInvoice_Click"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="0,0,8,0" Padding="12,6" Height="34" FontSize="12">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16"
+                                                      VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Email" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="BtnWhatsApp_Click"
+                            Padding="12,6" Height="34" FontSize="12"
+                            Background="#25D366" Foreground="White" BorderThickness="0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Whatsapp" Width="16" Height="16"
+                                                      VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="WhatsApp" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </WrapPanel>
+
+                <!-- Status text -->
+                <TextBlock x:Name="TxtShareStatus" FontSize="11" HorizontalAlignment="Center"
+                           TextWrapping="Wrap" Margin="0,0,0,6" Visibility="Collapsed"/>
+
+                <!-- Close -->
                 <Button Content="Close" Click="BtnClose_Click"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Padding="20,8" Height="38"/>
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        HorizontalAlignment="Center" Padding="20,6" Height="32" FontSize="12"/>
             </StackPanel>
         </Border>
 

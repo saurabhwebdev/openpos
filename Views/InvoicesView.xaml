@@ -133,7 +133,7 @@
                     <DatePicker x:Name="DpFrom" Width="140" FontSize="13"
                                 materialDesign:HintAssist.Hint="Start date"
                                 Style="{StaticResource MaterialDesignOutlinedDatePicker}"
-                                SelectedDateChanged="Filter_Changed"/>
+                                SelectedDateChanged="Filter_SelectionChanged"/>
                 </StackPanel>
 
                 <!-- Date To -->
@@ -142,7 +142,7 @@
                     <DatePicker x:Name="DpTo" Width="140" FontSize="13"
                                 materialDesign:HintAssist.Hint="End date"
                                 Style="{StaticResource MaterialDesignOutlinedDatePicker}"
-                                SelectedDateChanged="Filter_Changed"/>
+                                SelectedDateChanged="Filter_SelectionChanged"/>
                 </StackPanel>
 
                 <!-- Status Filter -->
@@ -150,7 +150,7 @@
                     <TextBlock Text="Status" FontSize="12" Opacity="0.5" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <ComboBox x:Name="CbStatus" Width="130" FontSize="13"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                              SelectionChanged="Filter_Changed">
+                              SelectionChanged="Filter_SelectionChanged">
                         <ComboBoxItem Content="All" IsSelected="True" Tag="ALL"/>
                         <ComboBoxItem Content="Completed" Tag="COMPLETED"/>
                         <ComboBoxItem Content="On Hold" Tag="HELD"/>

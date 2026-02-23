@@ -1,12 +1,16 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Drawing;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using MyWinFormsApp.Helpers;
 using MyWinFormsApp.Models;
 using MyWinFormsApp.Services;
+using QRCoder;
 
 namespace MyWinFormsApp.Views;
 
@@ -17,6 +21,7 @@ public partial class PosView : UserControl
     private List<Category> _categories = new();
     private Dictionary<int, TaxSlab> _taxSlabs = new();
     private BusinessDetails? _business;
+    private PaymentGatewaySettings? _gatewaySettings;
     private string _currencySymbol = "\u20b9";
     private int? _selectedCategoryId;
     private bool _isLoaded;
@@ -51,6 +56,8 @@ public partial class PosView : UserControl
         var slabs = await TaxService.GetTaxSlabsAsync(Session.CurrentTenant.Id, country);
         _taxSlabs = slabs.Where(s => s.IsActive).ToDictionary(t => t.Id, t => t);
 
+        _gatewaySettings = await PaymentGatewayService.GetAsync(Session.CurrentTenant.Id);
+
         _categories = await InventoryService.GetActiveCategoriesAsync(Session.CurrentTenant.Id);
         BuildCategoryButtons();
 
@@ -78,10 +85,12 @@ public partial class PosView : UserControl
         {
             Content = text,
             Tag = categoryId,
-            Margin = new Thickness(0, 0, 6, 0),
-            Padding = new Thickness(14, 6, 14, 6),
+            Margin = new Thickness(0, 0, 8, 0),
+            Padding = new Thickness(16, 6, 16, 6),
             FontSize = 12,
-            Height = 32
+            Height = 34,
+            FontWeight = FontWeights.Medium,
+            Cursor = Cursors.Hand
         };
 
         ApplyCategoryStyle(btn, isSelected);
@@ -92,9 +101,20 @@ public partial class PosView : UserControl
     private void ApplyCategoryStyle(Button btn, bool isSelected)
     {
         if (isSelected)
-            btn.Style = (Style)FindResource("MaterialDesignRaisedButton");
+        {
+            btn.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#7C4DFF"));
+            btn.Foreground = System.Windows.Media.Brushes.White;
+            btn.BorderBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#7C4DFF"));
+        }
         else
-            btn.Style = (Style)FindResource("MaterialDesignOutlinedButton");
+        {
+            btn.Background = System.Windows.Media.Brushes.Transparent;
+            btn.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#666666"));
+            btn.BorderBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E0E0E0"));
+        }
+        btn.BorderThickness = new Thickness(1.5);
+        // Apply pill shape via attached property
+        MaterialDesignThemes.Wpf.ButtonAssist.SetCornerRadius(btn, new CornerRadius(17));
     }
 
     private async void CategoryButton_Click(object sender, RoutedEventArgs e)
@@ -221,7 +241,7 @@ public partial class PosView : UserControl
         TxtDiscountValue.Text = "0";
         TxtAmountTendered.Text = "";
         _isPercentDiscount = false;
-        UpdateDiscountButtons();
+        if (RbDiscountFixed != null) RbDiscountFixed.IsChecked = true;
         RecalculateTotals();
     }
 
@@ -265,6 +285,10 @@ public partial class PosView : UserControl
         TaxBreakdownList.ItemsSource = taxBreakdown;
 
         CalculateChange();
+
+        // Refresh UPI QR if UPI is selected (amount changed)
+        if (RbUpi?.IsChecked == true)
+            UpdateUpiQrCode();
     }
 
     private List<TaxBreakdownItem> CalculateTaxBreakdown(decimal afterDiscount, decimal subtotal)
@@ -310,45 +334,29 @@ public partial class PosView : UserControl
 
     private void Discount_Changed(object sender, TextChangedEventArgs e) => RecalculateTotals();
 
-    private void BtnDiscountFixed_Click(object sender, RoutedEventArgs e)
+    private void DiscountType_Changed(object sender, RoutedEventArgs e)
     {
-        _isPercentDiscount = false;
-        UpdateDiscountButtons();
+        _isPercentDiscount = RbDiscountPercent?.IsChecked == true;
         RecalculateTotals();
-    }
-
-    private void BtnDiscountPercent_Click(object sender, RoutedEventArgs e)
-    {
-        _isPercentDiscount = true;
-        UpdateDiscountButtons();
-        RecalculateTotals();
-    }
-
-    private void UpdateDiscountButtons()
-    {
-        if (BtnDiscountFixed == null || BtnDiscountPercent == null) return;
-
-        if (_isPercentDiscount)
-        {
-            BtnDiscountPercent.Background = (Brush)FindResource("PrimaryHueLightBrush");
-            BtnDiscountPercent.Foreground = Brushes.White;
-            BtnDiscountFixed.ClearValue(Button.BackgroundProperty);
-            BtnDiscountFixed.ClearValue(Button.ForegroundProperty);
-        }
-        else
-        {
-            BtnDiscountFixed.Background = (Brush)FindResource("PrimaryHueLightBrush");
-            BtnDiscountFixed.Foreground = Brushes.White;
-            BtnDiscountPercent.ClearValue(Button.BackgroundProperty);
-            BtnDiscountPercent.ClearValue(Button.ForegroundProperty);
-        }
     }
 
     private void PaymentMethod_Changed(object sender, RoutedEventArgs e)
     {
         if (CashPanel == null) return;
+
         bool isCash = RbCash.IsChecked == true;
+        bool isUpi = RbUpi.IsChecked == true;
+        bool isCard = RbCard.IsChecked == true;
+
         CashPanel.Visibility = isCash ? Visibility.Visible : Visibility.Collapsed;
+        UpiPanel.Visibility = isUpi ? Visibility.Visible : Visibility.Collapsed;
+        CardPanel.Visibility = isCard ? Visibility.Visible : Visibility.Collapsed;
+
+        if (isUpi)
+            UpdateUpiQrCode();
+
+        if (isCard)
+            UpdateCardGatewayInfo();
     }
 
     private void AmountTendered_Changed(object sender, TextChangedEventArgs e) => CalculateChange();
@@ -369,6 +377,65 @@ public partial class PosView : UserControl
         decimal change = Math.Max(0, tendered - total);
 
         TxtChange.Text = $"{_currencySymbol}{change:N2}";
+    }
+
+    private void UpdateUpiQrCode()
+    {
+        var upiId = _business?.UpiId;
+        if (string.IsNullOrWhiteSpace(upiId))
+        {
+            TxtUpiId.Text = "UPI ID not configured. Set it in Settings > Business Details.";
+            ImgQrCode.Source = null;
+            TxtUpiAmount.Text = "";
+            return;
+        }
+
+        decimal total = GetGrandTotal();
+        var upiName = _business?.UpiName ?? _business?.BusinessName ?? "Merchant";
+
+        // Build UPI payment URI
+        var upiUri = $"upi://pay?pa={Uri.EscapeDataString(upiId)}&pn={Uri.EscapeDataString(upiName)}";
+        if (total > 0)
+            upiUri += $"&am={total:0.00}&cu=INR";
+
+        try
+        {
+            using var qrGenerator = new QRCodeGenerator();
+            using var qrCodeData = qrGenerator.CreateQrCode(upiUri, QRCodeGenerator.ECCLevel.M);
+            using var qrCode = new PngByteQRCode(qrCodeData);
+            var pngBytes = qrCode.GetGraphic(8);
+
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = new MemoryStream(pngBytes);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+
+            ImgQrCode.Source = bitmap;
+        }
+        catch
+        {
+            ImgQrCode.Source = null;
+        }
+
+        TxtUpiId.Text = upiId;
+        TxtUpiAmount.Text = total > 0 ? $"{_currencySymbol}{total:N2}" : "";
+    }
+
+    private void UpdateCardGatewayInfo()
+    {
+        if (_gatewaySettings != null && _gatewaySettings.IsActive)
+        {
+            TxtCardGateway.Text = $"Payment via {_gatewaySettings.GatewayName}";
+            var mode = _gatewaySettings.IsTestMode ? "Test Mode" : "Live";
+            TxtCardGatewayInfo.Text = $"{mode} | {_gatewaySettings.Currency}";
+        }
+        else
+        {
+            TxtCardGateway.Text = "Card Payment";
+            TxtCardGatewayInfo.Text = "No payment gateway configured. Set it in Settings > Payments.";
+        }
     }
 
     #endregion

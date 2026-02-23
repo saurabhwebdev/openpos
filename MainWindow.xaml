@@ -128,11 +128,11 @@
                             </StackPanel>
                         </ListBoxItem>
 
-                        <ListBoxItem Padding="16,12" ToolTip="Data Management">
+                        <ListBoxItem Padding="16,12" ToolTip="Reports">
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="DatabaseOutline" Width="24" Height="24"
+                                <materialDesign:PackIcon Kind="ChartBoxOutline" Width="24" Height="24"
                                                           VerticalAlignment="Center" Margin="0,0,16,0"/>
-                                <TextBlock x:Name="NavTextData" Text="Data Management"
+                                <TextBlock x:Name="NavTextData" Text="Reports"
                                            VerticalAlignment="Center" FontSize="14"/>
                             </StackPanel>
                         </ListBoxItem>

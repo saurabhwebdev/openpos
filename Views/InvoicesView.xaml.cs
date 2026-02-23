@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MyWinFormsApp.Helpers;
+using MyWinFormsApp.Models;
 using MyWinFormsApp.Services;
 
 namespace MyWinFormsApp.Views;
@@ -66,7 +68,7 @@ public partial class InvoicesView : UserControl
         }
     }
 
-    private async void Filter_Changed(object sender, EventArgs e)
+    private async void Filter_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         if (!_isLoaded) return;
         await LoadAsync();
@@ -86,15 +88,27 @@ public partial class InvoicesView : UserControl
 
     private async void Invoice_Click(object sender, MouseButtonEventArgs e)
     {
-        if (sender is not Border border || border.Tag is not int invoiceId) return;
+        // Resolve the invoice id from Tag — may be boxed int or need conversion
+        int invoiceId;
+        if (sender is Border border && border.Tag != null)
+        {
+            try { invoiceId = Convert.ToInt32(border.Tag); }
+            catch { return; }
+        }
+        else return;
 
+        try
+        {
         var (invoice, items) = await SalesService.GetInvoiceWithItemsAsync(invoiceId);
         if (invoice == null) return;
+
+        var dividerBrush = new System.Windows.Media.SolidColorBrush(
+            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E0E0E0"));
 
         // Build a simple receipt detail view
         var detail = new Border
         {
-            Background = (System.Windows.Media.Brush)FindResource("MaterialDesign.Brush.Card"),
+            Background = System.Windows.Media.Brushes.White,
             CornerRadius = new CornerRadius(16),
             Padding = new Thickness(28, 24, 28, 24),
             MinWidth = 420,
@@ -105,23 +119,20 @@ public partial class InvoicesView : UserControl
         var stack = new StackPanel();
 
         // Header
-        var header = new TextBlock
+        stack.Children.Add(new TextBlock
         {
             Text = $"Invoice {invoice.InvoiceNumber}",
-            FontSize = 18,
-            FontWeight = FontWeights.Bold,
+            FontSize = 18, FontWeight = FontWeights.Bold,
+            Foreground = System.Windows.Media.Brushes.Black,
             Margin = new Thickness(0, 0, 0, 4)
-        };
-        stack.Children.Add(header);
+        });
 
-        var dateText = new TextBlock
+        stack.Children.Add(new TextBlock
         {
             Text = invoice.FormattedDate,
-            FontSize = 12,
-            Opacity = 0.5,
+            FontSize = 12, Foreground = System.Windows.Media.Brushes.Gray,
             Margin = new Thickness(0, 0, 0, 16)
-        };
-        stack.Children.Add(dateText);
+        });
 
         // Customer
         if (!string.IsNullOrEmpty(invoice.CustomerName))
@@ -129,7 +140,7 @@ public partial class InvoicesView : UserControl
             stack.Children.Add(new TextBlock
             {
                 Text = $"Customer: {invoice.CustomerName}",
-                FontSize = 13,
+                FontSize = 13, Foreground = System.Windows.Media.Brushes.Black,
                 Margin = new Thickness(0, 0, 0, 8)
             });
         }
@@ -138,18 +149,12 @@ public partial class InvoicesView : UserControl
         stack.Children.Add(new TextBlock
         {
             Text = $"Status: {invoice.StatusDisplay}  |  Payment: {invoice.PaymentMethodDisplay}",
-            FontSize = 12,
-            Opacity = 0.6,
+            FontSize = 12, Foreground = System.Windows.Media.Brushes.Gray,
             Margin = new Thickness(0, 0, 0, 16)
         });
 
         // Divider
-        stack.Children.Add(new Border
-        {
-            Height = 1,
-            Background = (System.Windows.Media.Brush)FindResource("MaterialDesignDivider"),
-            Margin = new Thickness(0, 0, 0, 12)
-        });
+        stack.Children.Add(new Border { Height = 1, Background = dividerBrush, Margin = new Thickness(0, 0, 0, 12) });
 
         // Items header
         var itemsHeader = new Grid();
@@ -157,22 +162,22 @@ public partial class InvoicesView : UserControl
         itemsHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
         itemsHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
 
-        var hdrName = new TextBlock { Text = "Item", FontSize = 11, FontWeight = FontWeights.SemiBold, Opacity = 0.5 };
+        var hdrName = new TextBlock { Text = "Item", FontSize = 11, FontWeight = FontWeights.SemiBold, Foreground = System.Windows.Media.Brushes.Gray };
         Grid.SetColumn(hdrName, 0);
         itemsHeader.Children.Add(hdrName);
 
-        var hdrQty = new TextBlock { Text = "Qty", FontSize = 11, FontWeight = FontWeights.SemiBold, Opacity = 0.5, HorizontalAlignment = HorizontalAlignment.Center };
+        var hdrQty = new TextBlock { Text = "Qty", FontSize = 11, FontWeight = FontWeights.SemiBold, Foreground = System.Windows.Media.Brushes.Gray, HorizontalAlignment = HorizontalAlignment.Center };
         Grid.SetColumn(hdrQty, 1);
         itemsHeader.Children.Add(hdrQty);
 
-        var hdrAmt = new TextBlock { Text = "Amount", FontSize = 11, FontWeight = FontWeights.SemiBold, Opacity = 0.5, HorizontalAlignment = HorizontalAlignment.Right };
+        var hdrAmt = new TextBlock { Text = "Amount", FontSize = 11, FontWeight = FontWeights.SemiBold, Foreground = System.Windows.Media.Brushes.Gray, HorizontalAlignment = HorizontalAlignment.Right };
         Grid.SetColumn(hdrAmt, 2);
         itemsHeader.Children.Add(hdrAmt);
 
         stack.Children.Add(itemsHeader);
         stack.Children.Add(new Border { Height = 6 });
 
-        // Items list in scrollviewer
+        // Items list
         var itemsStack = new StackPanel();
         foreach (var item in items)
         {
@@ -181,15 +186,15 @@ public partial class InvoicesView : UserControl
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
 
-            var nameBlock = new TextBlock { Text = item.ProductName, FontSize = 12.5, TextTrimming = TextTrimming.CharacterEllipsis };
+            var nameBlock = new TextBlock { Text = item.ProductName, FontSize = 12.5, Foreground = System.Windows.Media.Brushes.Black, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(nameBlock, 0);
             row.Children.Add(nameBlock);
 
-            var qtyBlock = new TextBlock { Text = item.Quantity.ToString(), FontSize = 12, HorizontalAlignment = HorizontalAlignment.Center, Opacity = 0.7 };
+            var qtyBlock = new TextBlock { Text = item.Quantity.ToString(), FontSize = 12, Foreground = System.Windows.Media.Brushes.DimGray, HorizontalAlignment = HorizontalAlignment.Center };
             Grid.SetColumn(qtyBlock, 1);
             row.Children.Add(qtyBlock);
 
-            var amtBlock = new TextBlock { Text = $"\u20b9{item.LineTotal:N2}", FontSize = 12, HorizontalAlignment = HorizontalAlignment.Right };
+            var amtBlock = new TextBlock { Text = $"\u20b9{item.LineTotal:N2}", FontSize = 12, Foreground = System.Windows.Media.Brushes.Black, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(amtBlock, 2);
             row.Children.Add(amtBlock);
 
@@ -205,12 +210,7 @@ public partial class InvoicesView : UserControl
         stack.Children.Add(scrollViewer);
 
         // Divider
-        stack.Children.Add(new Border
-        {
-            Height = 1,
-            Background = (System.Windows.Media.Brush)FindResource("MaterialDesignDivider"),
-            Margin = new Thickness(0, 12, 0, 12)
-        });
+        stack.Children.Add(new Border { Height = 1, Background = dividerBrush, Margin = new Thickness(0, 12, 0, 12) });
 
         // Totals
         AddTotalRow(stack, "Subtotal", $"\u20b9{invoice.Subtotal:N2}");
@@ -226,11 +226,11 @@ public partial class InvoicesView : UserControl
         totalGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         totalGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-        var totalLabel = new TextBlock { Text = "Total", FontSize = 15, FontWeight = FontWeights.Bold };
+        var totalLabel = new TextBlock { Text = "Total", FontSize = 15, FontWeight = FontWeights.Bold, Foreground = System.Windows.Media.Brushes.Black };
         Grid.SetColumn(totalLabel, 0);
         totalGrid.Children.Add(totalLabel);
 
-        var totalValue = new TextBlock { Text = invoice.FormattedTotal, FontSize = 15, FontWeight = FontWeights.Bold };
+        var totalValue = new TextBlock { Text = invoice.FormattedTotal, FontSize = 15, FontWeight = FontWeights.Bold, Foreground = System.Windows.Media.Brushes.Black };
         Grid.SetColumn(totalValue, 1);
         totalGrid.Children.Add(totalValue);
 
@@ -245,27 +245,199 @@ public partial class InvoicesView : UserControl
                 AddTotalRow(stack, "Change", $"\u20b9{invoice.ChangeGiven.Value:N2}");
         }
 
+        // Share & Action buttons
+        var statusText = new TextBlock
+        {
+            FontSize = 11,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 12, 0, 0),
+            Visibility = Visibility.Collapsed
+        };
+
+        var btnPanel = new WrapPanel
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Margin = new Thickness(0, 16, 0, 0)
+        };
+
+        // Email button
+        var emailBtn = new Button
+        {
+            Content = "Email",
+            Margin = new Thickness(0, 0, 8, 0),
+            Height = 34,
+            Padding = new Thickness(14, 6, 14, 6),
+            FontSize = 12,
+            Background = System.Windows.Media.Brushes.Transparent,
+            Foreground = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3F51B5")),
+            BorderThickness = new Thickness(1),
+            BorderBrush = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3F51B5")),
+            Cursor = System.Windows.Input.Cursors.Hand
+        };
+        emailBtn.Click += async (_, _) =>
+        {
+            await HandleEmailInvoice(invoice, items, statusText);
+        };
+        btnPanel.Children.Add(emailBtn);
+
+        // WhatsApp button
+        var waBtn = new Button
+        {
+            Content = "WhatsApp",
+            Margin = new Thickness(0, 0, 8, 0),
+            Height = 34,
+            Padding = new Thickness(14, 6, 14, 6),
+            FontSize = 12,
+            Background = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#25D366")),
+            Foreground = System.Windows.Media.Brushes.White,
+            BorderThickness = new Thickness(0),
+            Cursor = System.Windows.Input.Cursors.Hand
+        };
+        waBtn.Click += (_, _) =>
+        {
+            HandleWhatsAppShare(invoice, items, statusText);
+        };
+        btnPanel.Children.Add(waBtn);
+
         // Close button
         var closeBtn = new Button
         {
             Content = "Close",
-            Margin = new Thickness(0, 20, 0, 0),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Height = 38,
-            FontSize = 13,
-            Style = (Style)FindResource("MaterialDesignFlatButton")
+            Height = 34,
+            Padding = new Thickness(14, 6, 14, 6),
+            FontSize = 12,
+            Background = System.Windows.Media.Brushes.Transparent,
+            Foreground = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3F51B5")),
+            BorderThickness = new Thickness(1),
+            BorderBrush = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3F51B5")),
+            Cursor = System.Windows.Input.Cursors.Hand
         };
         closeBtn.Click += (_, _) =>
         {
             if (Window.GetWindow(this) is MainWindow mw)
                 mw.HideModal();
         };
-        stack.Children.Add(closeBtn);
+        btnPanel.Children.Add(closeBtn);
+
+        stack.Children.Add(btnPanel);
+        stack.Children.Add(statusText);
 
         detail.Child = stack;
 
         if (Window.GetWindow(this) is MainWindow mainWin)
             mainWin.ShowModal(detail, () => mainWin.HideModal());
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Failed to load invoice details: {ex.Message}", "Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async Task HandleEmailInvoice(Invoice invoice, List<InvoiceItem> items, TextBlock statusText)
+    {
+        if (Session.CurrentTenant == null) return;
+
+        var emailSettings = await EmailService.GetAsync(Session.CurrentTenant.Id);
+        if (emailSettings == null || !emailSettings.IsActive)
+        {
+            SetStatusText(statusText, "Please configure email in Settings first.", false);
+            return;
+        }
+
+        var dialog = new EmailInputDialog();
+        if (Window.GetWindow(this) is MainWindow parentWin)
+            dialog.Owner = parentWin;
+
+        if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.EmailAddress))
+        {
+            SetStatusText(statusText, "Sending email...", true);
+
+            try
+            {
+                var biz = await BusinessService.GetAsync(Session.CurrentTenant.Id);
+                if (biz == null) { SetStatusText(statusText, "Business details not configured.", false); return; }
+
+                var currency = biz.CurrencySymbol ?? "\u20b9";
+                var taxSlabs = await TaxService.GetTaxSlabsAsync(Session.CurrentTenant.Id, biz.Country ?? "India");
+                var slabDict = taxSlabs.Where(s => s.IsActive).ToDictionary(t => t.Id, t => t);
+
+                var pdfPath = await Task.Run(() =>
+                    PdfExportService.GenerateInvoicePdf(biz, invoice, items, slabDict, currency));
+
+                var (success, message) = await EmailService.SendInvoiceEmailAsync(
+                    emailSettings, dialog.EmailAddress, pdfPath,
+                    invoice.InvoiceNumber, biz.BusinessName);
+
+                SetStatusText(statusText, message, success);
+            }
+            catch (Exception ex)
+            {
+                SetStatusText(statusText, $"Error: {ex.Message}", false);
+            }
+        }
+    }
+
+    private async void HandleWhatsAppShare(Invoice invoice, List<InvoiceItem> items, TextBlock statusText)
+    {
+        var dialog = new PhoneInputDialog();
+        if (Window.GetWindow(this) is MainWindow parentWin)
+            dialog.Owner = parentWin;
+
+        if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.PhoneNumber))
+        {
+            var phone = dialog.PhoneNumber.Trim().Replace(" ", "").Replace("-", "");
+            if (!phone.StartsWith("+"))
+                phone = "+91" + phone;
+
+            var biz = Session.CurrentTenant != null
+                ? await BusinessService.GetAsync(Session.CurrentTenant.Id)
+                : null;
+
+            var bizName = biz?.BusinessName ?? "Business";
+            var currency = biz?.CurrencySymbol ?? "\u20b9";
+
+            var itemLines = string.Join("\n", items.Select(i =>
+                $"  {i.ProductName} x{i.Quantity:0.##} = {currency}{i.LineTotal:N2}"));
+
+            var message = $"*Invoice {invoice.InvoiceNumber}*\n" +
+                          $"From: {bizName}\n" +
+                          $"Date: {invoice.CreatedAt:dd MMM yyyy}\n\n" +
+                          $"Items:\n{itemLines}\n\n" +
+                          $"*Total: {currency}{invoice.TotalAmount:N2}*\n" +
+                          $"Payment: {invoice.PaymentMethodDisplay}\n\n" +
+                          "Thank you for your business!";
+
+            var encoded = Uri.EscapeDataString(message);
+            var url = $"https://wa.me/{phone}?text={encoded}";
+
+            try
+            {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                SetStatusText(statusText, "WhatsApp opened!", true);
+            }
+            catch (Exception ex)
+            {
+                SetStatusText(statusText, $"Could not open WhatsApp: {ex.Message}", false);
+            }
+        }
+    }
+
+    private static void SetStatusText(TextBlock statusText, string message, bool isSuccess)
+    {
+        statusText.Text = message;
+        statusText.Visibility = Visibility.Visible;
+        statusText.Foreground = isSuccess
+            ? new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#10B981"))
+            : new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#EF4444"));
     }
 
     private static void AddTotalRow(StackPanel parent, string label, string value, string? color = null)

@@ -189,11 +189,13 @@ public static class InventoryService
             @"SELECT p.*,
                      c.name as category_name,
                      t.tax_name as tax_slab_name,
-                     u.short_name as unit_name
+                     u.short_name as unit_name,
+                     s.name as supplier_name
               FROM products p
               LEFT JOIN categories c ON p.category_id = c.id
               LEFT JOIN tax_slabs t ON p.tax_slab_id = t.id
               LEFT JOIN units u ON p.unit_id = u.id
+              LEFT JOIN suppliers s ON p.supplier_id = s.id
               WHERE p.tenant_id = @TenantId
               ORDER BY p.name",
             new { TenantId = tenantId });
@@ -206,11 +208,13 @@ public static class InventoryService
             @"SELECT p.*,
                      c.name as category_name,
                      t.tax_name as tax_slab_name,
-                     u.short_name as unit_name
+                     u.short_name as unit_name,
+                     s.name as supplier_name
               FROM products p
               LEFT JOIN categories c ON p.category_id = c.id
               LEFT JOIN tax_slabs t ON p.tax_slab_id = t.id
               LEFT JOIN units u ON p.unit_id = u.id
+              LEFT JOIN suppliers s ON p.supplier_id = s.id
               WHERE p.tenant_id = @TenantId
                 AND (LOWER(p.name) LIKE @Search
                      OR LOWER(p.sku) LIKE @Search
@@ -238,6 +242,7 @@ public static class InventoryService
                     @"UPDATE products SET
                         name = @Name, description = @Description,
                         category_id = @CategoryId, tax_slab_id = @TaxSlabId, unit_id = @UnitId,
+                        supplier_id = @SupplierId,
                         sku = @Sku, barcode = @Barcode, hsn_code = @HsnCode,
                         cost_price = @CostPrice, selling_price = @SellingPrice, mrp = @Mrp,
                         min_stock_level = @MinStockLevel, is_active = @IsActive,
@@ -249,11 +254,11 @@ public static class InventoryService
                 product.Id = await DatabaseHelper.ExecuteScalarAsync<int>(
                     @"INSERT INTO products (
                         tenant_id, name, description, category_id, tax_slab_id, unit_id,
-                        sku, barcode, hsn_code, cost_price, selling_price, mrp,
+                        supplier_id, sku, barcode, hsn_code, cost_price, selling_price, mrp,
                         current_stock, min_stock_level, is_active
                       ) VALUES (
                         @TenantId, @Name, @Description, @CategoryId, @TaxSlabId, @UnitId,
-                        @Sku, @Barcode, @HsnCode, @CostPrice, @SellingPrice, @Mrp,
+                        @SupplierId, @Sku, @Barcode, @HsnCode, @CostPrice, @SellingPrice, @Mrp,
                         @CurrentStock, @MinStockLevel, @IsActive
                       ) RETURNING id", product);
             }
@@ -276,6 +281,88 @@ public static class InventoryService
         {
             await DatabaseHelper.ExecuteAsync("DELETE FROM products WHERE id = @Id", new { Id = id });
             return (true, "Product deleted.");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Failed to delete: {ex.Message}");
+        }
+    }
+
+    #endregion
+
+    #region Suppliers
+
+    public static async Task<List<Supplier>> GetSuppliersAsync(int tenantId)
+    {
+        var results = await DatabaseHelper.QueryAsync<Supplier>(
+            "SELECT * FROM suppliers WHERE tenant_id = @TenantId ORDER BY name",
+            new { TenantId = tenantId });
+        return results.ToList();
+    }
+
+    public static async Task<List<Supplier>> GetActiveSuppliersAsync(int tenantId)
+    {
+        var results = await DatabaseHelper.QueryAsync<Supplier>(
+            "SELECT * FROM suppliers WHERE tenant_id = @TenantId AND is_active = TRUE ORDER BY name",
+            new { TenantId = tenantId });
+        return results.ToList();
+    }
+
+    public static async Task<(bool Success, string Message)> SaveSupplierAsync(Supplier supplier)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(supplier.Name))
+                return (false, "Supplier name is required.");
+
+            var existing = await DatabaseHelper.QueryFirstOrDefaultAsync<Supplier>(
+                "SELECT id FROM suppliers WHERE id = @Id", new { supplier.Id });
+
+            if (existing != null)
+            {
+                await DatabaseHelper.ExecuteAsync(
+                    @"UPDATE suppliers SET
+                        name = @Name, contact_person = @ContactPerson,
+                        email = @Email, phone = @Phone,
+                        address = @Address, city = @City, state = @State, pin_code = @PinCode,
+                        gst_number = @GstNumber, notes = @Notes,
+                        is_active = @IsActive, updated_at = NOW()
+                      WHERE id = @Id", supplier);
+            }
+            else
+            {
+                supplier.Id = await DatabaseHelper.ExecuteScalarAsync<int>(
+                    @"INSERT INTO suppliers (
+                        tenant_id, name, contact_person, email, phone,
+                        address, city, state, pin_code, gst_number, notes, is_active
+                      ) VALUES (
+                        @TenantId, @Name, @ContactPerson, @Email, @Phone,
+                        @Address, @City, @State, @PinCode, @GstNumber, @Notes, @IsActive
+                      ) RETURNING id", supplier);
+            }
+
+            return (true, "Supplier saved successfully!");
+        }
+        catch (Exception ex) when (ex.Message.Contains("unique") || ex.Message.Contains("duplicate"))
+        {
+            return (false, "A supplier with this name already exists.");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Failed to save: {ex.Message}");
+        }
+    }
+
+    public static async Task<(bool Success, string Message)> DeleteSupplierAsync(int id)
+    {
+        try
+        {
+            await DatabaseHelper.ExecuteAsync("DELETE FROM suppliers WHERE id = @Id", new { Id = id });
+            return (true, "Supplier deleted.");
+        }
+        catch (Exception ex) when (ex.Message.Contains("foreign key") || ex.Message.Contains("violates"))
+        {
+            return (false, "Cannot delete: this supplier is linked to products.");
         }
         catch (Exception ex)
         {

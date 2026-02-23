@@ -30,7 +30,15 @@
                         Margin="0,0,4,0"/>
                 <Button x:Name="BtnTabTax" Content="Tax"
                         Style="{StaticResource MaterialDesignFlatButton}"
-                        Click="BtnTabTax_Click" FontSize="14" Padding="16,8"/>
+                        Click="BtnTabTax_Click" FontSize="14" Padding="16,8"
+                        Margin="0,0,4,0"/>
+                <Button x:Name="BtnTabEmail" Content="Email"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Click="BtnTabEmail_Click" FontSize="14" Padding="16,8"
+                        Margin="0,0,4,0"/>
+                <Button x:Name="BtnTabPayment" Content="Payments"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Click="BtnTabPayment_Click" FontSize="14" Padding="16,8"/>
             </StackPanel>
             <Border Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,0,0,0"/>
         </StackPanel>

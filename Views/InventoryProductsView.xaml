@@ -20,13 +20,22 @@
                                 <TextBlock Text="Products" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="TxtCount" FontSize="12" Opacity="0.5" VerticalAlignment="Center" Margin="8,0,0,0"/>
                             </StackPanel>
-                            <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                                    HorizontalAlignment="Right" Click="BtnAdd_Click" Height="36">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                    <TextBlock Text="Add Product" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        Click="BtnImportExcel_Click" Height="36" Margin="0,0,8,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="FileExcelOutline" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                        <TextBlock Text="Import Excel" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                                        Click="BtnAdd_Click" Height="36">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                        <TextBlock Text="Add Product" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </DockPanel>
 
                         <TextBox x:Name="TxtSearch"
@@ -139,6 +148,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,14">
@@ -160,44 +170,49 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,14">
+                                <TextBlock Text="Supplier" FontSize="11" Opacity="0.5"/>
+                                <TextBlock x:Name="TxtDetailSupplier" FontSize="14"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,14">
                                 <TextBlock Text="HSN Code" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailHsn" FontSize="14"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,14">
+
+                            <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,14">
                                 <TextBlock Text="Tax" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailTax" FontSize="14"/>
                             </StackPanel>
 
-                            <Border Grid.Row="3" Grid.ColumnSpan="3" Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,4,0,14"/>
+                            <Border Grid.Row="4" Grid.ColumnSpan="3" Height="1" Background="{DynamicResource MaterialDesignDivider}" Margin="0,4,0,14"/>
 
-                            <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,0,14">
+                            <StackPanel Grid.Row="5" Grid.Column="0" Margin="0,0,0,14">
                                 <TextBlock Text="Cost Price" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailCost" FontSize="14"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="4" Grid.Column="2" Margin="0,0,0,14">
+                            <StackPanel Grid.Row="5" Grid.Column="2" Margin="0,0,0,14">
                                 <TextBlock Text="Selling Price" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailSelling" FontSize="16" FontWeight="Bold"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="5" Grid.Column="0" Margin="0,0,0,14">
+                            <StackPanel Grid.Row="6" Grid.Column="0" Margin="0,0,0,14">
                                 <TextBlock Text="MRP" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailMrp" FontSize="14"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="5" Grid.Column="2" Margin="0,0,0,14">
+                            <StackPanel Grid.Row="6" Grid.Column="2" Margin="0,0,0,14">
                                 <TextBlock Text="Current Stock" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailStock" FontSize="16" FontWeight="Bold"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="6" Grid.Column="0" Margin="0,0,0,14">
+                            <StackPanel Grid.Row="7" Grid.Column="0" Margin="0,0,0,14">
                                 <TextBlock Text="Min Stock Level" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailMinStock" FontSize="14"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="6" Grid.Column="2" Margin="0,0,0,14">
+                            <StackPanel Grid.Row="7" Grid.Column="2" Margin="0,0,0,14">
                                 <TextBlock Text="Status" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailStatus" FontSize="14"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,4">
+                            <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,4">
                                 <TextBlock Text="Description" FontSize="11" Opacity="0.5"/>
                                 <TextBlock x:Name="TxtDetailDesc" FontSize="13" TextWrapping="Wrap" Opacity="0.8"/>
                             </StackPanel>
@@ -249,6 +264,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBox x:Name="TxtName" Grid.Row="0" Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                      materialDesign:HintAssist.Hint="Product Name *" FontSize="14" Margin="0,0,0,12"/>
@@ -262,6 +278,8 @@
                                       materialDesign:HintAssist.Hint="Category" FontSize="14" Margin="0,0,0,12" DisplayMemberPath="Name" SelectedValuePath="Id"/>
                             <ComboBox x:Name="CmbUnit" Grid.Row="2" Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedComboBox}"
                                       materialDesign:HintAssist.Hint="Unit" FontSize="14" Margin="0,0,0,12" DisplayMemberPath="DisplayName" SelectedValuePath="Id"/>
+                            <ComboBox x:Name="CmbSupplier" Grid.Row="3" Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                      materialDesign:HintAssist.Hint="Supplier" FontSize="14" Margin="0,0,0,12" DisplayMemberPath="Name" SelectedValuePath="Id"/>
                         </Grid>
 
                         <TextBox x:Name="TxtDescription" Style="{StaticResource MaterialDesignOutlinedTextBox}"
