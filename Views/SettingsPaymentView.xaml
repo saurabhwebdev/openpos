@@ -4,7 +4,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40,24,40,24">
-        <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+        <StackPanel>
 
             <!-- Gateway Selection -->
             <Border CornerRadius="12" Padding="24,20"
@@ -36,7 +36,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="BtnStripe" Grid.Column="0" Height="60"
+                        <Button x:Name="BtnStripe" Grid.Column="0" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="Stripe"
                                 HorizontalContentAlignment="Center">
@@ -46,13 +46,16 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="S" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#635BFF" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/idxAg10C0L/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="Stripe" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="BtnPayPal" Grid.Column="2" Height="60"
+                        <Button x:Name="BtnPayPal" Grid.Column="2" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="PayPal"
                                 HorizontalContentAlignment="Center">
@@ -62,13 +65,16 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="P" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#003087" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/idLqSBC-bt/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="PayPal" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="BtnRazorpay" Grid.Column="4" Height="60"
+                        <Button x:Name="BtnRazorpay" Grid.Column="4" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="Razorpay"
                                 HorizontalContentAlignment="Center">
@@ -78,13 +84,16 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="R" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#0066FF" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/id20mQyGeY/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="Razorpay" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="BtnPaytm" Grid.Column="6" Height="60"
+                        <Button x:Name="BtnPaytm" Grid.Column="6" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="Paytm"
                                 HorizontalContentAlignment="Center">
@@ -94,8 +103,11 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="Pt" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#00BAF2" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/idXbCMm3yW/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="Paytm" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
@@ -113,7 +125,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="BtnPhonePe" Grid.Column="0" Height="60"
+                        <Button x:Name="BtnPhonePe" Grid.Column="0" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="PhonePe"
                                 HorizontalContentAlignment="Center">
@@ -123,13 +135,16 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="Pe" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#5F259F" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/id2alue4LG/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="PhonePe" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="BtnSquare" Grid.Column="2" Height="60"
+                        <Button x:Name="BtnSquare" Grid.Column="2" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="Square"
                                 HorizontalContentAlignment="Center">
@@ -139,13 +154,16 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="Sq" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#006AFF" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/idVfYwcuQz/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="Square" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="BtnInstamojo" Grid.Column="4" Height="60"
+                        <Button x:Name="BtnInstamojo" Grid.Column="4" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="Instamojo"
                                 HorizontalContentAlignment="Center">
@@ -155,13 +173,16 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="Im" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#D4A843" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/idR6NFbOML/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="Instamojo" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="BtnCashfree" Grid.Column="6" Height="60"
+                        <Button x:Name="BtnCashfree" Grid.Column="6" Height="68"
                                 materialDesign:ButtonAssist.CornerRadius="10"
                                 Click="BtnGateway_Click" Tag="Cashfree"
                                 HorizontalContentAlignment="Center">
@@ -171,8 +192,11 @@
                                 </Style>
                             </Button.Style>
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="Cf" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
-                                           Foreground="#00CC6A" Margin="0,0,0,2"/>
+                                <Image Width="28" Height="28" Margin="0,0,0,4" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="https://cdn.brandfetch.io/id6a8bFXxh/w/400/h/400/theme/dark/icon.jpeg" DecodePixelWidth="28"/>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="Cashfree" FontSize="11" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
