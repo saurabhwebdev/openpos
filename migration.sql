@@ -1,4 +1,4 @@
--- FreePOS Migration: Add customers, credit_notes, purchase_orders tables
+-- OpenPOS Migration: Add customers, credit_notes, purchase_orders tables
 
 -- Customers table
 CREATE TABLE IF NOT EXISTS public.customers (

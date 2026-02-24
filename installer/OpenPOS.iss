@@ -1,13 +1,13 @@
 ; ============================================
-; FreePOS Inno Setup Installer Script
+; OpenPOS Inno Setup Installer Script
 ; ============================================
-; Build command: "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" FreePOS.iss
+; Build command: "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" OpenPOS.iss
 
-#define MyAppName "FreePOS"
+#define MyAppName "OpenPOS"
 #define MyAppVersion "1.0.0"
-#define MyAppPublisher "FreePOS"
+#define MyAppPublisher "OpenPOS"
 #define MyAppExeName "MyWinFormsApp.exe"
-#define MyAppURL "https://freepos.app"
+#define MyAppURL "https://openpos.app"
 
 [Setup]
 AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}
@@ -19,7 +19,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputDir=output
-OutputBaseFilename=FreePOS-Setup-{#MyAppVersion}
+OutputBaseFilename=OpenPOS-Setup-{#MyAppVersion}
 SetupIconFile=
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -38,7 +38,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "installpostgres"; Description: "Install PostgreSQL 17 (required if not already installed)"; GroupDescription: "Database:"; Flags: checked
 
 [Files]
-; FreePOS application files (self-contained publish output)
+; OpenPOS application files (self-contained publish output)
 Source: "publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; Database setup files
@@ -70,10 +70,10 @@ Filename: "cmd.exe"; \
 ; Run database setup
 Filename: "cmd.exe"; \
     Parameters: "/c ""{app}\db\setup-db.bat"""; \
-    StatusMsg: "Setting up FreePOS database..."; \
+    StatusMsg: "Setting up OpenPOS database..."; \
     Flags: waituntilterminated runhidden
 
-; Launch FreePOS after install
+; Launch OpenPOS after install
 Filename: "{app}\{#MyAppExeName}"; \
     Description: "Launch {#MyAppName}"; \
     Flags: nowait postinstall skipifsilent

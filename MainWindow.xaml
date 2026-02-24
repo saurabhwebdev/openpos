@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:MyWinFormsApp.ViewModels"
-        Title="FreePOS" Height="720" Width="1200"
+        Title="OpenPOS" Height="720" Width="1200"
         MinHeight="550" MinWidth="850"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MaterialDesign.Brush.Background}"
@@ -30,7 +30,7 @@
                             Foreground="White" Margin="0,0,8,0">
                         <materialDesign:PackIcon Kind="Menu" Width="22" Height="22"/>
                     </Button>
-                    <TextBlock Text="FreePOS" FontSize="20" FontWeight="Medium"
+                    <TextBlock Text="OpenPOS" FontSize="20" FontWeight="Medium"
                                VerticalAlignment="Center"/>
                     <!-- DB Connection Status -->
                     <Border x:Name="DbStatusBadge" CornerRadius="8" Padding="6,2" Margin="10,0,0,0"

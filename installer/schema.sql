@@ -1,4 +1,4 @@
--- FreePOS Database Schema
+-- OpenPOS Database Schema
 -- Run this against a fresh PostgreSQL database
 
 SET statement_timeout = 0;

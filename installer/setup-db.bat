@@ -1,15 +1,15 @@
 @echo off
 REM ============================================
-REM FreePOS Database Setup Script
+REM OpenPOS Database Setup Script
 REM ============================================
-REM This script creates the FreePOS database and runs the schema.
+REM This script creates the OpenPOS database and runs the schema.
 REM It expects PostgreSQL bin directory in PATH or uses the installed location.
 
 setlocal enabledelayedexpansion
 
 echo.
 echo ============================================
-echo   FreePOS Database Setup
+echo   OpenPOS Database Setup
 echo ============================================
 echo.
 

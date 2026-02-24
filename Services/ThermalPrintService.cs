@@ -204,7 +204,7 @@ internal static class RawPrinterHelper
 
             var di = new DOCINFOW
             {
-                pDocName = "FreePOS Receipt",
+                pDocName = "OpenPOS Receipt",
                 pOutputFile = null,
                 pDataType = "RAW"
             };

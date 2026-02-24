@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
 </p>
 
-<h1 align="center">FreePOS</h1>
+<h1 align="center">OpenPOS</h1>
 
 <p align="center">
   <strong>A modern, full-featured Point of Sale system for Windows</strong>
@@ -23,7 +23,7 @@
 
 ## Overview
 
-FreePOS is a desktop Point of Sale application designed for retail businesses, shops, and small enterprises. It provides a complete business management solution including sales processing, inventory management, supplier tracking, tax compliance, PDF reporting, email integration, and Excel data import/export.
+OpenPOS is a desktop Point of Sale application designed for retail businesses, shops, and small enterprises. It provides a complete business management solution including sales processing, inventory management, supplier tracking, tax compliance, PDF reporting, email integration, and Excel data import/export.
 
 The application follows a multi-tenant architecture, allowing multiple businesses to operate on the same installation with complete data isolation.
 
@@ -190,8 +190,8 @@ The application follows a multi-tenant architecture, allowing multiple businesse
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/saurabhwebdev/freepos.git
-   cd freepos
+   git clone https://github.com/saurabhwebdev/openpos.git
+   cd openpos
    ```
 
 2. **Create the database**
@@ -231,7 +231,7 @@ dotnet publish -c Release -r win-x64 --self-contained true
 ### Project Structure
 
 ```
-freepos-app/
+openpos-app/
 ├── Models/                     # Data models (POCO classes for Dapper)
 │   ├── Invoice.cs              # Invoice with computed properties
 │   ├── InvoiceItem.cs          # Individual line items
@@ -278,7 +278,7 @@ freepos-app/
 │   └── Session.cs              # Static session state
 │
 ├── installer/                  # Windows installer files
-│   ├── FreePOS.iss             # Inno Setup script
+│   ├── OpenPOS.iss             # Inno Setup script
 │   ├── schema.sql              # Full database schema
 │   ├── setup-db.bat            # Database setup script
 │   └── build-installer.ps1     # Build automation
@@ -372,7 +372,7 @@ The database consists of 18 tables organized as follows:
 
 ### Windows Installer
 
-FreePOS includes an Inno Setup-based Windows installer that bundles everything needed:
+OpenPOS includes an Inno Setup-based Windows installer that bundles everything needed:
 
 1. **Install prerequisites**
    - [Inno Setup 6](https://jrsoftware.org/isinfo.php)
@@ -434,7 +434,7 @@ All PDF reports are generated using QuestPDF with consistent professional format
 
 - **A4 page size** (portrait or landscape depending on report)
 - **Business branding** at the top of every report
-- **Page numbers** with "FreePOS" footer
+- **Page numbers** with "OpenPOS" footer
 - **Color-coded data** (red for low stock, blue for headers)
 - **Automatic page breaks** for large datasets
 

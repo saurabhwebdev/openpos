@@ -85,6 +85,103 @@
             </StackPanel>
         </ScrollViewer>
 
+        <!-- PO Detail Modal -->
+        <Grid x:Name="OverlayDetail" Visibility="Collapsed">
+            <materialDesign:Card x:Name="DetailCard" MinWidth="600" MaxWidth="750" Padding="32" UniformCornerRadius="16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="600">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,16">
+                            <TextBlock x:Name="TxtDetailTitle" Text="Purchase Order"
+                                       Style="{StaticResource MaterialDesignHeadline6TextBlock}" DockPanel.Dock="Left"/>
+                            <Button Style="{StaticResource MaterialDesignIconForegroundButton}" HorizontalAlignment="Right"
+                                    Click="BtnDetailClose_Click" Padding="4" Height="32" Width="32">
+                                <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                            </Button>
+                        </DockPanel>
+
+                        <!-- PO Info -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="TxtDetailPoNumber" FontSize="14" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtDetailSupplier" FontSize="12" Opacity="0.7" Margin="0,2,0,0"/>
+                                <TextBlock x:Name="TxtDetailDate" FontSize="11" Opacity="0.5" Margin="0,2,0,0"/>
+                                <TextBlock x:Name="TxtDetailExpected" FontSize="11" Opacity="0.5" Margin="0,2,0,0"/>
+                                <TextBlock x:Name="TxtDetailNotes" FontSize="11" Opacity="0.5" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                                <TextBlock x:Name="TxtDetailStatus" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="TxtDetailSubtotal" FontSize="11" Opacity="0.6" HorizontalAlignment="Right" Margin="0,4,0,0"/>
+                                <TextBlock x:Name="TxtDetailTax" FontSize="11" Opacity="0.6" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                                <TextBlock x:Name="TxtDetailTotal" FontSize="18" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Items Table Header -->
+                        <Border Background="{DynamicResource MaterialDesignDivider}" Padding="8,6" CornerRadius="4,4,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="90"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="#" FontWeight="SemiBold" FontSize="11"/>
+                                <TextBlock Grid.Column="1" Text="Product" FontWeight="SemiBold" FontSize="11"/>
+                                <TextBlock Grid.Column="2" Text="Qty" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Column="3" Text="Price" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Column="4" Text="Tax" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Column="5" Text="Total" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Border>
+                        <ItemsControl x:Name="DetailItemsList"/>
+
+                        <!-- Action Buttons -->
+                        <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,1,0,0" Margin="0,16,0,0" Padding="0,16,0,0">
+                            <WrapPanel HorizontalAlignment="Center">
+                                <Button x:Name="BtnDetailPdf" Click="BtnDetailPdf_Click"
+                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        Margin="0,0,8,0" Padding="12,6" Height="36" FontSize="12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="FilePdfBox" Width="18" Height="18"
+                                                                  VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Download PDF" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="BtnDetailEmail" Click="BtnDetailEmail_Click"
+                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        Margin="0,0,8,0" Padding="12,6" Height="36" FontSize="12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="EmailOutline" Width="18" Height="18"
+                                                                  VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Email to Supplier" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="BtnDetailMarkOrdered" Click="BtnDetailMarkOrdered_Click"
+                                        Padding="12,6" Height="36" FontSize="12"
+                                        Background="#7C3AED" Foreground="White" BorderThickness="0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Check" Width="18" Height="18"
+                                                                  VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Mark as Ordered" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </WrapPanel>
+                        </Border>
+
+                        <!-- Status message -->
+                        <TextBlock x:Name="TxtDetailMessage" FontSize="11" HorizontalAlignment="Center"
+                                   TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </materialDesign:Card>
+        </Grid>
+
         <!-- New PO Modal -->
         <Grid x:Name="OverlayEdit" Visibility="Collapsed">
             <materialDesign:Card x:Name="EditCard" MinWidth="700" MaxWidth="850" Padding="32" UniformCornerRadius="16">

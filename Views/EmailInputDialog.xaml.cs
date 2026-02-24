@@ -5,12 +5,18 @@ namespace MyWinFormsApp.Views;
 public partial class EmailInputDialog : Window
 {
     public string EmailAddress { get; private set; } = string.Empty;
+    public string? PreFillEmail { get; set; }
 
     public EmailInputDialog(string headerText = "Send by Email")
     {
         InitializeComponent();
         TxtHeader.Text = headerText;
-        TxtEmail.Focus();
+        Loaded += (_, _) =>
+        {
+            if (!string.IsNullOrEmpty(PreFillEmail))
+                TxtEmail.Text = PreFillEmail;
+            TxtEmail.Focus();
+        };
     }
 
     private void BtnSend_Click(object sender, RoutedEventArgs e)

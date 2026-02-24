@@ -37,7 +37,7 @@ public partial class SettingsBackupView : UserControl
         {
             Title = "Save Database Backup",
             Filter = "SQL Backup|*.sql|All Files|*.*",
-            FileName = $"freepos_backup_{DateTime.Now:yyyyMMdd_HHmmss}.sql"
+            FileName = $"openpos_backup_{DateTime.Now:yyyyMMdd_HHmmss}.sql"
         };
         if (dlg.ShowDialog() != true) return;
 

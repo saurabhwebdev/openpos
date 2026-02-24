@@ -106,7 +106,7 @@ public static class EmailService
                 new MailAddress(recipientEmail))
             {
                 Subject = $"{reportName} Report - {businessName}",
-                Body = $"Hi,\n\nPlease find attached the {reportName} report from {businessName}.\n\nThis report was generated on {DateTime.Now:dd MMM yyyy hh:mm tt}.\n\nBest regards,\n{businessName}\n\nPowered by FreePOS",
+                Body = $"Hi,\n\nPlease find attached the {reportName} report from {businessName}.\n\nThis report was generated on {DateTime.Now:dd MMM yyyy hh:mm tt}.\n\nBest regards,\n{businessName}\n\nPowered by OpenPOS",
                 IsBodyHtml = false
             };
 
@@ -114,6 +114,42 @@ public static class EmailService
 
             await client.SendMailAsync(message);
             return (true, $"Report emailed to {recipientEmail} successfully!");
+        }
+        catch (SmtpException ex)
+        {
+            return (false, $"SMTP Error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Failed to send email: {ex.Message}");
+        }
+    }
+
+    public static async Task<(bool Success, string Message)> SendPurchaseOrderEmailAsync(
+        EmailSettings settings, string recipientEmail, string pdfPath, string poNumber, string businessName, string supplierName)
+    {
+        try
+        {
+            using var client = new SmtpClient(settings.SmtpHost, settings.SmtpPort)
+            {
+                Credentials = new NetworkCredential(settings.SenderEmail, settings.Password),
+                EnableSsl = settings.UseSsl,
+                Timeout = 30000
+            };
+
+            var message = new MailMessage(
+                new MailAddress(settings.SenderEmail, settings.SenderName),
+                new MailAddress(recipientEmail))
+            {
+                Subject = $"Purchase Order {poNumber} from {businessName}",
+                Body = $"Dear {supplierName},\n\nPlease find attached the purchase order {poNumber} from {businessName}.\n\nPlease review and confirm at your earliest convenience.\n\nBest regards,\n{businessName}",
+                IsBodyHtml = false
+            };
+
+            message.Attachments.Add(new Attachment(pdfPath));
+
+            await client.SendMailAsync(message);
+            return (true, $"PO emailed to {recipientEmail} successfully!");
         }
         catch (SmtpException ex)
         {
@@ -140,8 +176,8 @@ public static class EmailService
                 new MailAddress(settings.SenderEmail, settings.SenderName),
                 new MailAddress(settings.SenderEmail))
             {
-                Subject = "FreePOS - Email Test",
-                Body = "This is a test email from FreePOS. Your email settings are configured correctly!",
+                Subject = "OpenPOS - Email Test",
+                Body = "This is a test email from OpenPOS. Your email settings are configured correctly!",
                 IsBodyHtml = false
             };
 
